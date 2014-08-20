@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% load bootstrap_tags %}
+{% load static %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="row">
+
+            <div class="col-sm-6 col-sm-offset-3">
+
+                <h4>Welcome to the Gottacon LAN, {{ registered_user.first_name }}</h4>
+
+                <div style="margin-top: 10px; margin-bottom: 20px;">
+                    <p>
+                        In order to join the Gottacon LAN network you must run the program provided in the download below. <br />
+                    </p>
+
+                    <p>
+                        The program will screen your computer for the following requirements:
+                        <ul>
+                            <li>Antivirus Installed</li>
+                            <li>Firewall Enabled</li>
+                            <li>File and Printer Sharing Disabled</li>
+                            <li>DHCP Enabled</li>
+                        </ul>
+                    </p>
+                </div>
+
+                <div>
+                    <a href="{% url 'verify_dl' %}" class="btn btn-primary btn-block">Download</a>
+                </div>
+
+                <div style="margin-top: 20px;" class="alert alert-info">
+
+                    If you are a mac user or have issues, you will have to be manually verified by LAN staff.
+
+                </div>
+
+            </div>
+        </div>
+
+
+
+        <div style="text-align: center;">
+            <a href="#" data-toggle="modal" data-target="#overrideModal">Enter override code</a>
+        </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="overrideModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Override</h4>
+          </div>
+          <div class="modal-body">
+            <form>
+
+                <div class="form-group">
+                    <label for="id_overrideCode">Override Code</label>
+                    <input id="id_overrideCode" type="password" class="form-control" name="override_code" />
+                </div>
+
+                <div class="form-group">
+                    <button type="button" class="btn btn-primary pull-right">Submit</button>
+                    <div class="clearfix"></div>
+                </div>
+
+            </form>
+          </div>
+
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+{% endblock body %}
+
+{% block scripts %}
+    <script type="text/javascript" src="{% static "js/app.js" %}"></script>
+{% endblock scripts %}

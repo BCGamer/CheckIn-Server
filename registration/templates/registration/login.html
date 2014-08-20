@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% load bootstrap_tags %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+            <div class="col-sm-4 col-sm-offset-4">
+                <h3>Gottacon LAN Registration</h3>
+            </div>
+        </div>
+
+        <div class="row">
+
+
+            <div class="col-sm-4 col-sm-offset-4">
+
+                <div style="margin-top: 10px; margin-bottom: 10px;">
+                    Need an account? <a href="{% url 'register' %}">Register here.</a>
+                </div>
+
+                <form action="." method="POST" class="">
+                    {% csrf_token %}
+                    {{ form|as_bootstrap }}
+
+                    <div class="form-group">
+
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock body %}

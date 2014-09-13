@@ -1,16 +1,19 @@
 import json
 import logging
 
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.http import require_POST
 from registration.models import RegisteredUser
 from unix_mac import get_mac_address
-from registration.forms import RegistrationForm
+from registration.forms import RegistrationForm, VerificationResponseForm
 from django.template import loader, RequestContext
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+
+
 log = logging.getLogger(__name__)
 
 
@@ -80,7 +83,7 @@ def verify(request):
     }
 
 
-    return render(request, 'registration/powershell.html', context)
+    return render(request, 'registration/verification.html', context)
 
 @login_required
 def verify_download(request):
@@ -103,37 +106,59 @@ def verify_download(request):
 @login_required
 def check_verification(request):
 
-    response = {'verification_received': request.user.verification_received}
+    response = {
+        'verification_received': request.user.verification_received,
+        'ready2lan': False,
+        'antivirus': False,
+        'firewall': False,
+        'dhcp': False,
+    }
 
     if request.user.verification_received:
-        response['antivirus'] = request.user.has_antivirus
-        response['firewall'] = request.user.has_firewall
-        response['sfp'] = request.user.shared_file_print_off
-        response['dhcp'] = request.user.dhcp_enabled
+        if request.user.reg_errors:
+            response['errors'] = json.loads(request.user.reg_errors)
+        if not request.user.ready2lan():
+            response['antivirus'] = request.user.has_antivirus
+            response['firewall'] = request.user.has_firewall
+            response['dhcp'] = request.user.dhcp_enabled
+        else:
+            response['ready2lan'] = True
 
-    return HttpResponse(json.dumps(response), content_type='application/json')
+    return JsonResponse(response)
 
+@require_POST
 @csrf_exempt
 def verification_response(request):
+
+    print(request.POST)
+    print(request.body)
 
     if request.method != 'POST':
         return HttpResponseBadRequest()
 
+    form = VerificationResponseForm(request.POST)
+
     user = get_object_or_404(RegisteredUser, uuid=request.POST.get('uuid'))
 
-    firewall = request.POST.get('firewall')
-    antivirus = request.POST.get('antivirus')
-    dhcp = request.POST.get('dhcp')
-    sfp = request.POST.get('sfp')
+    form_valid = form.is_valid()
 
-    user.has_firewall = True if firewall == 'good' else False
-    user.has_antivirus = True if antivirus == 'good' else False
-    user.shared_file_print_off = True if sfp == 'good' else False
-    user.dhcp_enabled = True if dhcp == 'good' else False
+    user.dhcp_enabled = form.dhcp_good
+    user.has_antivirus = form.antivirus_good
+    user.has_firewall = form.firewall_good
+    user.verification_received = True
+
+    if form_valid:
+        response = {'detail': 'Dobbo is good'}
+    else:
+        user.reg_errors = json.dumps(form.errors)
+        response = form.errors
 
     user.save()
 
-    return HttpResponse(status=200)
+    return JsonResponse(response, status=200)
+
+
+
 
 
 def get_uuid_for_ip(request):

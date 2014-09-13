@@ -1,7 +1,6 @@
 from django.conf.urls import patterns, include, url
 
 from django.contrib import admin
-admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
@@ -13,7 +12,7 @@ urlpatterns = patterns('',
 
     url(r'^$', 'registration.views.register', name='register'),
     url(r'^verify/$', 'registration.views.verify', name='verify'),
-    url(r'^verify/check/$', 'registration.views.check_verification', name='verify'),
+    url(r'^verify/check/$', 'registration.views.check_verification', name='check_verification'),
     url(r'^verify/dl/$', 'registration.views.verify_download', name='verify_dl'),
     url(r'^verify/uuidforip/$', 'registration.views.get_uuid_for_ip', name='uuid_for_ip'),
 

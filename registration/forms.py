@@ -38,3 +38,64 @@ class CaseInsenstiveAuthForM(AuthenticationForm):
     def clean_username(self):
         username = self.cleaned_data.get('username')
         return username.lower()
+
+
+class VerificationResponseForm(forms.Form):
+
+    DHCP_CHOICES = (
+        ('True', 'True'),
+        ('False', 'False'),
+        ('Problem', 'Problem'),
+    )
+
+    SECOND_BLOCK_GOOD_CODES = ['10', '11']  # enabled
+    SECOND_BLOCK_BAD_CODES = ['00', '01']  # disabled
+
+    THIRD_BLOCK_GOOD_CODES = ['00']  # up to date
+    THIRD_BLOCK_BAD_CODES = ['10']  # out of date
+
+    firewall = forms.CharField(max_length=6)
+    antivirus = forms.CharField(max_length=6)
+    dhcp = forms.ChoiceField(choices=DHCP_CHOICES)
+
+    firewall_good = False
+    antivirus_good = False
+    dhcp_good = False
+
+    def charint_to_hex(self, value):
+        try:
+            firewall = hex(int(value))
+        except ValueError:
+            raise forms.ValidationError("Invalid Hex value submitted")
+
+        return value
+
+    def test_second_block(self, value):
+        if value[-2:] in self.SECOND_BLOCK_BAD_CODES:
+            raise forms.ValidationError("Disabled")
+        elif value[-4:-2] in self.THIRD_BLOCK_BAD_CODES:
+            raise forms.ValidationError("Out of date")
+
+    def clean_dhcp(self):
+        dhcp = self.cleaned_data['dhcp']
+
+        if dhcp == 'False':
+            raise forms.ValidationError("DHCP is not enabled.")
+
+        elif dhcp == 'Problem':
+            raise forms.ValidationError("DHCP configuration error was detected.")
+
+        self.dhcp_good = True
+
+    def clean_firewall(self):
+        firewall = self.charint_to_hex(self.cleaned_data['firewall'])
+        self.test_second_block(firewall)
+
+        self.firewall_good = True
+
+    def clean_antivirus(self):
+        antivirus = self.charint_to_hex(self.cleaned_data['antivirus'])
+        self.test_second_block(antivirus)
+
+        self.antivirus_good = True
+

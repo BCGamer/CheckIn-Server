@@ -6,14 +6,17 @@ from django_extensions.db.fields import UUIDField
 from django.contrib.auth.models import AbstractUser
 
 
+def generate_uuid():
+    return str(uuid.uuid4())
+
+
 class RegisteredUser(AbstractUser):
-
-
 
     has_firewall = models.BooleanField(default=False)
     has_antivirus = models.BooleanField(default=False)
     dhcp_enabled = models.BooleanField(default=False)
-    shared_file_print_off = models.BooleanField(default=False)
+
+    reg_errors = models.TextField(blank=True)
 
     verification_received = models.BooleanField(default=False)
 
@@ -24,10 +27,23 @@ class RegisteredUser(AbstractUser):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
-
     gottacon_id = models.CharField(max_length=50, blank=True, null=True)
 
     time_in = models.DateTimeField(blank=True, null=True)
     time_out = models.DateTimeField(blank=True, null=True)
 
-    uuid = UUIDField(default=str(uuid.uuid4()))
+    uuid = UUIDField( default=generate_uuid )
+
+    def ready2lan(self):
+        return all([self.has_firewall, self.has_antivirus, self.dhcp_enabled])
+
+
+class ResponseCode(models.Model):
+
+
+
+    good_to_go = models.BooleanField(default=False)
+    code = models.CharField(max_length=6)
+
+    def __unicode__(self):
+        return '{self.code}'.format(self=self)

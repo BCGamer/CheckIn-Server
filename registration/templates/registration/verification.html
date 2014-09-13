@@ -6,7 +6,7 @@
 {% block body %}
 
     <div class="container">
-        <div class="row">
+        <div class="row" id="verification-download">
 
             <div class="col-sm-6 col-sm-offset-3">
 
@@ -29,7 +29,7 @@
                 </div>
 
                 <div>
-                    <a href="{% url 'verify_dl' %}" class="btn btn-primary btn-block">Download</a>
+                    <a href="{% url 'verify_dl' %}" class="btn btn-primary btn-block" id="initial-download">Download</a>
                 </div>
 
                 <div style="margin-top: 20px;" class="alert alert-info">
@@ -41,6 +41,29 @@
             </div>
         </div>
 
+        <div class="row" style="display: none;" id="please-wait-div">
+            <div class="col-sm-6 col-sm-offset-3">
+                <div class="alert alert-warning" style="text-align: center;">
+                    <p>Please run the Gottacon LAN validation tool.</p>
+                    <p>Once it has analyzed your computer it will display the results here.</p>
+                    <p><a href="{% url 'verify_dl' %}">Retry Download</a> </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="display: none;" id="results-div">
+            <div class="col-sm-6 col-sm-offset-3">
+                <div class="alert" id="firewall-status">
+                    <strong>Firewall:</strong> <span class="message">Success</span>
+                </div>
+                <div class="alert" id="antivirus-status">
+                    <strong>Antivirus:</strong> <span class="message"> Antivirus is out of date.</span>
+                </div>
+                <div class="alert" id="dhcp-status">
+                    <strong>DHCP:</strong> <span class="message"> DHCP configuration error detected.</span>
+                </div>
+            </div>
+        </div>
 
 
         <div style="text-align: center;">

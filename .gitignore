@@ -55,3 +55,6 @@ target/
 
 .idea
 *.sqlite3
+
+#Vagrant
+Vagrantfile

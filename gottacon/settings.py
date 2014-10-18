@@ -41,6 +41,10 @@ INSTALLED_APPS = (
     'django_extensions',
     'django_forms_bootstrap',
     'registration',
+
+    'networkcontrol.providers.hp',
+    'networkcontrol.providers.cisco',
+
     'networkcontrol',
 )
 

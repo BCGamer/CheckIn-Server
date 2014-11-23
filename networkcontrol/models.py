@@ -39,7 +39,8 @@ class Switch(models.Model):
 
     def run_cmd(self, cmd):
         provider = self.get_provider()
-        provider.run_command(cmd)
+        output = provider.run_command(cmd)
+        return output
 
     def get_channel(self):
         self.connect()

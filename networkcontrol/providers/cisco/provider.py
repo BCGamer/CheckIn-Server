@@ -1,3 +1,4 @@
+import telnetlib
 from networkcontrol.providers.base import BaseSwitchBackend
 from networkcontrol.providers import registry
 

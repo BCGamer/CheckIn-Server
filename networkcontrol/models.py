@@ -18,6 +18,8 @@ class Switch(models.Model):
 
     provider = models.CharField(max_length=30, choices=registry.as_choices(), verbose_name='Type')
 
+    enabled = models.BooleanField(default=False)
+
     _provider_cache = None
 
     class Meta:

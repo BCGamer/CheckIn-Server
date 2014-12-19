@@ -44,6 +44,7 @@ INSTALLED_APPS = (
 
     'networkcontrol.providers.hp',
     'networkcontrol.providers.cisco',
+    'networkcontrol.providers.mikrotik',
 
     'networkcontrol',
 )

@@ -1,5 +1,4 @@
 from django.db import models
-
 from networkcontrol.providers import registry
 
 
@@ -11,6 +10,9 @@ class Switch(models.Model):
 
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
+
+    vlan1 = models.IntegerField(default=70, verbose_name='Dirty')
+    vlan2 = models.IntegerField(default=50, verbose_name='Clean')
 
     requires_authentication = models.BooleanField(default=True)
 

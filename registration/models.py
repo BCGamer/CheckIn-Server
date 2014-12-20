@@ -19,6 +19,7 @@ class RegisteredUser(AbstractUser):
     reg_errors = models.TextField(blank=True)
 
     verification_received = models.BooleanField(default=False)
+    signed_waiver = models.BooleanField(default=False)
 
     hostname = models.CharField(max_length=50, blank=True)
     mac = models.CharField(max_length=20, blank=True, null=True)

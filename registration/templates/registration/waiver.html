@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% load bootstrap_tags %}
+{% load static %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="row" id="verification-download">
+
+            <div class="col-sm-6 col-sm-offset-3">
+
+                <h4>Welcome to GottaCon, {{ registered_user.first_name }}</h4>
+
+                <div style="margin-top: 10px; margin-bottom: 20px;">
+                    <p>
+                        WAIVER. Add "I Accept" button. <br />
+                    </p>
+                </div>
+
+                <div>
+                    <a href="{% url 'verify_dl' %}" class="btn btn-primary btn-block" id="initial-download">I Accept</a>
+                </div>
+
+                <div style="margin-top: 20px;" class="alert alert-info">
+                    <p>
+                        If you are a mac user or are having issues, you will have to be manually verified.
+                    </p>
+                    <p>
+                        Contact the nearest LAN staff for assistance.
+                    </p>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+{% endblock body %}
+
+{% block scripts %}
+
+{% endblock scripts %}

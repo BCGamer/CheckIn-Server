@@ -35,7 +35,9 @@ def login_user(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect('verify')
+            #return redirect('verify')
+            return redirect('waiver')
+
 
     return render(request, 'registration/login.html', {'form': form})
 
@@ -66,12 +68,38 @@ def register(request):
 
             login(request, registered_user)
 
-            return redirect('verify')
+            #return redirect('verify')
+            return redirect('waiver')
+
 
         else:
             return render(request, 'registration/register.html', {'form': form})
 
     return render(request, 'registration/register.html', {'form': form})
+
+
+@login_required
+def waiver(request):
+
+    registered_user = request.user
+
+    context = {
+        'registered_user': registered_user
+    }
+
+    return render(request, 'registration/waiver.html', context)
+
+
+@login_required
+def waiver_submit(request):
+
+    registered_user = request.user
+
+    context = {
+        'registered_user': registered_user
+    }
+
+    return render(request, 'registration/waiver.html', context)
 
 @login_required
 def verify(request):
@@ -82,8 +110,8 @@ def verify(request):
         'registered_user': registered_user
     }
 
-
     return render(request, 'registration/verification.html', context)
+
 
 @login_required
 def verify_download(request):
@@ -102,6 +130,7 @@ def verify_download(request):
     response['Content-Disposition'] = 'attachment; filename=assess-%s.ps1' % registered_user.uuid
 
     return response
+
 
 @login_required
 def check_verification(request):
@@ -125,6 +154,7 @@ def check_verification(request):
             response['ready2lan'] = True
 
     return JsonResponse(response)
+
 
 @require_POST
 @csrf_exempt
@@ -156,9 +186,6 @@ def verification_response(request):
     user.save()
 
     return JsonResponse(response, status=200)
-
-
-
 
 
 def get_uuid_for_ip(request):

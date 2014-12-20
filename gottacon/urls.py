@@ -11,6 +11,10 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'registration.views.logout_user', name='logout'),
 
     url(r'^$', 'registration.views.register', name='register'),
+
+    url(r'^waiver/$', 'registration.views.waiver', name='waiver'),
+    url(r'^waiver/submit/$', 'registration.views.waiver_submit', name='waiver_submit'),
+
     url(r'^verify/$', 'registration.views.verify', name='verify'),
     url(r'^verify/check/$', 'registration.views.check_verification', name='check_verification'),
     url(r'^verify/dl/$', 'registration.views.verify_download', name='verify_dl'),

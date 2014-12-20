@@ -6,32 +6,148 @@
 {% block body %}
 
     <div class="container">
-        <div class="row" id="verification-download">
+        <div class="row" id="waiver_terms">
+            <div class="col-sm-10 col-sm-offset-1">
+                <form role="form">
+                    <div class="form-group">
+                        <label for="waiver">Section I: Definition of Terms</label>
+                        <textarea class="form-control"
+                                  rows="5"
+                                  readonly="true"
+                                  disabled="true"
+                                  style="resize:none;"
+                                  wrap="soft"
+                                  id="waiver">
+For the purposes of this document, the following terms shall be used:
 
-            <div class="col-sm-6 col-sm-offset-3">
+● The GottaCon LAN, also referred to as a “computer gaming event” or “event” is officially known as GottaCon 2015.
 
-                <h4>Welcome to GottaCon, {{ registered_user.first_name }}</h4>
+● The term “Hosts” includes, but is not limited to the Sponsors, Event Staff, Event Site personnel, and other persons.
 
-                <div style="margin-top: 10px; margin-bottom: 20px;">
-                    <p>
-                        WAIVER. Add "I Accept" button. <br />
-                    </p>
+● The physical location of the GottaCon LAN is held at:
+        Victoria Conference Centre
+        720 Douglas St
+        Victoria BC
+        V8W 3M7
+
+● The official website of GottaCon 2015 is http://www.gottacon.com and is the location of information for attendees regarding theGottaCon LAN.</textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row" id="waiver_acknowledgement">
+            <div class="col-sm-10 col-sm-offset-1">
+                <form role="form">
+                    <div class="form-group">
+                        <label for="waiver">Section II: Acknowledgement</label>
+                        <textarea class="form-control"
+                                  rows="8"
+                                  readonly="true"
+                                  disabled="true"
+                                  style="resize:none;"
+                                  wrap="soft"
+                                  id="waiver">
+I hereby acknowledge that I desire to participate in the computer gaming event(s) which is entitled and defined in section I as “The GottaCon LAN” at “the location”. I also acknowledge that my decision to participate in the GottaCon LAN is totally voluntary and is solely for the purpose of my pursuit of recreational activities that I enjoy. I authorize the use of any photos (both digital and print) and videos, for GottaCon 2015 use and posting on websites and in other print/digital media. I agree that I am fully aware of the risks and hazards inherent in entering the premises including but not limited to wire hazards on floor, high voltage electrical wiring on floor, narrow aisles, and other hazards and/or in participating in the GottaCon LAN and hereby elect to voluntarily enter upon said premises, knowing the present condition and knowing that said condition may become more hazardous and dangerous. I, the undersigned, hereby assume all risk of illness or injury in the GottaCon LAN in which I voluntarily participate. For and in consideration of permission to participate in the GottaCon LAN, I hereby irrevocably and forever release, discharge, waive and hold harmless the GottaCon LAN and its officers, directors, employees, sponsors and agents from any and all claims, losses, causes of action and liabilities of any kind (including attorneys’ fees) arising out of or relating in any way to the GottaCon LAN. I voluntarily waive any claims that I might have against the Hosts, and I understand and agree that the Hosts assume no responsibility or liability for any injury to persons or property (including property that is lost, stolen or damaged), that may occur during the GottaCon LAN. I agree that I have read and will follow all official rules which are posted on the website and at the GottaCon LAN. I further agree that during the GottaCon LAN I shall conduct myself in an appropriate fashion and I shall not behave poorly by violating rules, performing harmful acts, using profanity, obscenity or any otherwise objectionable conduct towards any person or property involved with the GottaCon LAN. I recognize and understand that the Hosts reserve the right to require cessation of any such activity and the Hosts, in their sole discretion, may require my removal from the GottaCon LAN(s), without any refund of any kind. I agree that am at least 18 years of age, or that if I am not 18 years of age, that the undersigned parent or guardian has executed this agreement on my behalf. By signature of such parent or guardian, the parent or guardian is binding the participant to all the terms of this agreement. I agree this instrument, in its entirety, is intended by me to be binding upon my heirs, executors, administrators, agents and/or assigns.</textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row" id="waiver_parental">
+            <div class="col-sm-10 col-sm-offset-1">
+                <form role="form">
+                    <div class="form-group">
+                        <label for="waiver">Section III: Parental Consent</label>
+                        <textarea class="form-control"
+                                  rows="8"
+                                  readonly="true"
+                                  disabled="true"
+                                  style="resize:none;"
+                                  wrap="soft"
+                                  id="waiver">
+This section is only necessary if this agreement is being executed on the behalf of a minor child, a person under the age of 18, and should be completed only by the parent or legal guardian of the minor child. I am the parent or legal guardian of the minor child listed below. I hereby execute and enter into the Hold Harmless and Assumption of Risk Agreement on his or her behalf. I understand and agree that through participation in events held in connection with the GottaCon LAN, including, without limitation, official tournaments, the event participants will likely play or be involved with M-Rated, or Mature-Rated, computer software games (with the M-Rating designating an industry rating of suggested play for individuals 17 years or older). I also acknowledge and agree that I have seen the game play involved with these games. Further, I understand that many individually owned computers brought to the GottaCon LAN may display and/or contain content deemed not suitable for minors and that participants of the GottaCon LAN can engage in informal competitions that may contain M-Rated games and/or other potentially objectionable material. I hereby provide my informed consent to my child’s (or ward’s) participation in such games at the GottaCon LAN (including participation in games prior to, or following, the GottaCon LAN), and to otherwise participate in the GottaCon LAN. I agree that my child (or ward) may attend unescorted, and that I assume full responsibility and liability for the minor child’s behaviour, and their adherence to the attached guidelines for participation.</textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row" id="waiver_checkboxes">
+            <div class="col-sm-4 col-sm-offset-1">
+                <div class="checkbox">
+                    <label><input type="checkbox"
+                                  value="false"
+                                  id="waiver-accept">I acknowledge and accept</label>
                 </div>
-
-                <div>
-                    <a href="{% url 'verify_dl' %}" class="btn btn-primary btn-block" id="initial-download">I Accept</a>
+            </div>
+            <div class="col-sm-4 col-sm-offset-2">
+                <div class="checkbox">
+                    <label><input type="checkbox"
+                                  value="false"
+                                  id="waiver-under18">I am under the age of 18</label>
                 </div>
+            </div>
+        </div>
 
-                <div style="margin-top: 20px;" class="alert alert-info">
-                    <p>
-                        If you are a mac user or are having issues, you will have to be manually verified.
-                    </p>
-                    <p>
-                        Contact the nearest LAN staff for assistance.
-                    </p>
-
+        <div class="row" id="waiver_guardian">
+                <div class="form-group">
+                    <div class="col-sm-4 col-sm-offset-1">
+                        <label for="guardian_name">Parent or Legal Guardian:</label>
+                        <input type="text" class="form-control" id="guardian_name">
+                    </div>
+                    <div class="col-sm-4 col-sm-offset-2">
+                        <label for="guardian_phone">Emergency phone number:</label>
+                        <input type="text" class="form-control" id="guardian_phone">
+                    </div>
                 </div>
+        </div>
 
+        <p> </p> <!-- spacer -->
+
+        <div class="row" id="waiver_buttons">
+            <div class="col-sm-4 col-sm-offset-1">
+                <a href="{% url 'waiver_submit' %}"
+                   class="btn btn-primary btn-block"
+                   id="waiver-submit">Submit</a>
+            </div>
+        </div>
+
+        <div class="row" id="waiver_guidelines">
+            <div class="col-sm-10 col-sm-offset-1">
+                <form role="form">
+                    <div class="form-group">
+                        <label for="waiver">Participation Guidelines</label>
+                        <textarea class="form-control"
+                                  rows="8"
+                                  readonly="true"
+                                  disabled="true"
+                                  style="resize:none;"
+                                  wrap="soft"
+                                  id="waiver">
+- Participants WILL conduct themselves in a professional and sportsmanlike manner.
+- Participants will be respectful of each other’s person and equipment.
+- Tournament and Raffle winners will make themselves available for photos as per sponsor’s requirements.
+- Failure to follow these guidelines will result in immediate disqualification
+
+● CHEATING:
+GottaCon 2015 has a zero tolerance for cheating! If you are caught using any of the following cheats but not limited to: cheat codes, exploits, debug version game kernels or libraries, excessive ping of network devices or computers to slow network bandwidth. If you are caught cheating during any tournament match, it will result in the forfeiture of the game, and disqualification from all remaining tournaments/games and removal from the site.
+
+● ACTS OF VIOLENCE:
+Acts of violence will NOT be tolerated! Intentional damage to the property, other guest's computers, staff property, network equipment, and items belonging to sponsors, is grounds for immediate removal from the event without refund. The GottaCon 2015 staff reserve the sole right to define what is and what is not a violent act. No weapons of any kind are allowed at GottaCon 2015, this includes play toy weapons, paintball markers, Airsoft guns etc.
+
+● ILLEGAL ACTIVITIES:
+GottaCon 2015 does not, under any circumstances condone any type of illegal activity whatsoever, including but not limited to the copying of illegal software, MP3's or distribution of pornographic material to minors. GottaCon 2015 Staff / Admins do not condone pirating; however we cannot and will not police machines and network traffic trying to find such items. Each individual is solely responsible for the software / files and the copyright laws associated with items that are located on their machine. In addition GottaCon 2015 has a firm policy against viewing of pornographic material at our events. Please be aware that making pornographic material viewable and or accessible to minors is illegal. If a staff member view's pornography displayed on your computer at any time, you will be removed from GottaCon LAN without refund. Participants understands that his/her machines(s) are his/her personal responsibility and liability and agrees to indemnify, defend and hold harmless GottaCon 2015 /Staff /Hosts/ Sponsors and each Sponsor's directors, officers, employees, agents and representatives from any claims arising out of, in whole or in part, the participant's use in any way of his/her computers, monitor, or other computer related equipment during any GottaCon 2015.
+
+● Hacking:
+We do not tolerate hacking of any kind under any circumstance. Hacking of computers, network devices, DoS attacks, viruses, backdoors or anything of the sort is grounds for immediate dismissal from the GottaCon 2015 without refund and can lead to banning said player from all future events.
+
+● OFFICIALS:
+GottaCon 2015 officials along with Sponsors execute all facets of the event and tournaments. GottaCon 2015 Administrators and Sponsors reserve the right to require any Participant to replay any match for any reason, at their sole discretion and to disqualify any participant who fails to follow the Official Rules, who makes any misrepresentation relative to the Tournament and/or the redemption of prizes, who tamper with the entry process or the operation of the Tournament or Web Site, who acts in violation of the Official Rules, who acts in an unsportsmanlike or disruptive manner or who acts with intent to annoy, abuse, threaten or harass any other person(s). To ensure that players have played according to the Official Rules, Tournament Officials will review ALL game play during the Tournament. Decisions by Tournament officials are FINAL. All prizewinners will be identified on site at the Event.
+
+● LIMITATION OF LIABILITY:
+Sponsors and/or GottaCon 2015 Administrators are not responsible for any inaccurate information, whether caused by the Official Web Site or by the Web Site users or by any of the equipment or programming associated with or utilized in the event or the Tournament or by any technical or human error which may occur in the processing of Tournament results. GottaCon 2015 Administrators/Sponsors assume NO liability for any injury, loss, or damage of any kind arising from or in connection with any person’s participation in the Event or Tournament, including without limitation, participation in any real life activity, or injury, loss or damage sustained from use of any prize won. If for any reason the Event or the Tournament is not capable of running as planned, including infection by computer virus’, bugs, tampering, unauthorized intervention, fraud, technical failures, or any other causes beyond the control of the GottaCon 2015 Administrator’s/Sponsors which corrupt or affect the administration, security, fairness, integrity, or proper conduct of the Event or the Tournament, GottaCon 2015 Administrator’s/Sponsors reserve the right at their sole discretion to cancel, terminate, modify or suspend the Event and the Tournament without refund. By participating in the Tournament, each Participant agrees to be bound by the Official Rules. GOTTACON 2015 ADMINISTRATORS/SPONSORS SHALL NOT BE LIABLE FOR PUNITIVE, INCIDENTAL, CONSEQUENTIAL OR SPECIAL DAMAGES WHETHER OR NOT SUCH DAMAGES COULD HAVE BEEN FORESEEN AND WHETHER OR NOT SPONSORS OR ANY SPONSOR OR ADMINISTRATOR RECEIVED NOTICE THEREOF.</textarea>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

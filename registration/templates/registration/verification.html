@@ -10,15 +10,15 @@
 
             <div class="col-sm-6 col-sm-offset-3">
 
-                <h4>Welcome to the Gottacon LAN, {{ registered_user.first_name }}</h4>
+                <h4>Welcome to GottaCon, {{ registered_user.first_name }}</h4>
 
                 <div style="margin-top: 10px; margin-bottom: 20px;">
                     <p>
-                        In order to join the Gottacon LAN network you must run the program provided in the download below. <br />
+                        In order to join the network you must download and run this program below. <br />
                     </p>
 
                     <p>
-                        The program will screen your computer for the following requirements:
+                        This will screen your computer for the following requirements:
                         <ul>
                             <li>Antivirus Installed</li>
                             <li>Firewall Enabled</li>
@@ -33,8 +33,12 @@
                 </div>
 
                 <div style="margin-top: 20px;" class="alert alert-info">
-
-                    If you are a mac user or have issues, you will have to be manually verified by LAN staff.
+                    <p>
+                        If you are a mac user or are having issues, you will have to be manually verified.
+                    </p>
+                    <p>
+                        Contact the nearest LAN staff for assistance.
+                    </p>
 
                 </div>
 
@@ -44,7 +48,7 @@
         <div class="row" style="display: none;" id="please-wait-div">
             <div class="col-sm-6 col-sm-offset-3">
                 <div class="alert alert-warning" style="text-align: center;">
-                    <p>Please run the Gottacon LAN validation tool.</p>
+                    <p>Please run the validation tool.</p>
                     <p>Once it has analyzed your computer it will display the results here.</p>
                     <p><a href="{% url 'verify_dl' %}">Retry Download</a> </p>
                 </div>

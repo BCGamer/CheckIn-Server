@@ -6,7 +6,8 @@ class RegistrationForm(forms.ModelForm):
 
     first_name = forms.CharField(required=True)
     last_name = forms.CharField(required=True)
-    gottacon_id = forms.CharField(required=True, label="Handle")
+    gottacon_id = forms.CharField(required=True, label="Attendee ID")
+    nickname = forms.CharField(required=True, label="In Game Name / Handle")
     email = forms.CharField(required=True)
     password = forms.CharField(required=True, widget=forms.PasswordInput())
     password_2 = forms.CharField(required=True, label='Password Repeat', widget=forms.PasswordInput())
@@ -17,6 +18,7 @@ class RegistrationForm(forms.ModelForm):
             'first_name',
             'last_name',
             'gottacon_id',
+            'nickname',
             'email',
         )
 

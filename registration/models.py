@@ -28,6 +28,7 @@ class RegisteredUser(AbstractUser):
     modified = models.DateTimeField(auto_now=True)
 
     gottacon_id = models.CharField(max_length=50, blank=True, null=True)
+    nickname = models.CharField(max_length=50, blank=True, null=True)
 
     time_in = models.DateTimeField(blank=True, null=True)
     time_out = models.DateTimeField(blank=True, null=True)

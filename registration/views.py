@@ -99,7 +99,7 @@ def waiver_submit(request):
         'registered_user': registered_user
     }
 
-    return render(request, 'registration/waiver.html', context)
+    return render(request, 'registration/verification.html', context)
 
 @login_required
 def verify(request):

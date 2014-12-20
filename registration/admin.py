@@ -24,11 +24,12 @@ class RegisteredUserAdmin(UserAdmin):
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
-        (_('PC Info'), {'fields': ('ip_address',)}),
+        (_('PC Info'), {'fields': ('ip_address', 'mac')}),
         (_('Gottacon Requirements'), {'fields': ('verification_received',
                                                  'has_antivirus',
                                                  'has_firewall',
                                                  'dhcp_enabled',
+                                                 'signed_waiver',
                                                  'reg_errors',
         )}),
     )

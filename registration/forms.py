@@ -118,3 +118,6 @@ class WaiverForm(forms.ModelForm):
             'guardian_name',
             'guardian_phone',
         )
+
+class LoginForm(AuthenticationForm):
+    username = forms.CharField(label="Email", max_length=50)

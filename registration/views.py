@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from registration.models import RegisteredUser
 from unix_mac import get_mac_address
-from registration.forms import RegistrationForm, VerificationResponseForm, WaiverForm
+from registration.forms import RegistrationForm, VerificationResponseForm, WaiverForm, LoginForm
 from django.template import loader, RequestContext
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
@@ -29,8 +29,8 @@ def home(request):
 
 def login_user(request):
 
-    form = AuthenticationForm(data=request.POST or None)
-    #form = LoginForm(data=request.POST or None)
+   # form = AuthenticationForm(data=request.POST or None)
+    form = LoginForm(data=request.POST or None)
 
     if request.method == 'POST':
         if form.is_valid():
@@ -61,6 +61,7 @@ def register(request):
             registered_user = form.save(commit=False)
             registered_user.ip_address = request.META.get('REMOTE_ADDR')
             registered_user.username = form.cleaned_data['email'].lower()
+            registered_user.email = form.cleaned_data['email'].lower()
             registered_user.set_password(form.cleaned_data['password'])
             registered_user.save()
             registered_user.backend = "django.contrib.auth.backends.ModelBackend"

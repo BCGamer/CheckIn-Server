@@ -15,13 +15,17 @@ class RegisteredUserAdmin(UserAdmin):
     readonly_fields = ('uuid',)
 
     fieldsets = (
-        (None, {'fields': ('username', 'password', 'gottacon_id', 'uuid')}),
+        (None, {'fields': ('email',
+                           #'username',
+                           'gottacon_id',
+                           'uuid',
+                           'password',
+        )}),
         (_('Personal info'), {'fields': ('first_name',
                                          'last_name',
-                                         'email',
+                                         #'email',
                                          'nickname'
         )}),
-        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
         (_('PC Info'), {'fields': ('ip_address', 'mac')}),
         (_('Waiver'), {'fields': ('age_under_18',
                                   'waiver_signed',
@@ -34,6 +38,7 @@ class RegisteredUserAdmin(UserAdmin):
                                                  'dhcp_enabled',
                                                  'reg_errors',
         )}),
+        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
     )

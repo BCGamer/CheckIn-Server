@@ -30,6 +30,7 @@ def home(request):
 def login_user(request):
 
     form = AuthenticationForm(data=request.POST or None)
+    #form = LoginForm(data=request.POST or None)
 
     if request.method == 'POST':
         if form.is_valid():
@@ -59,7 +60,7 @@ def register(request):
         if form.is_valid():
             registered_user = form.save(commit=False)
             registered_user.ip_address = request.META.get('REMOTE_ADDR')
-            registered_user.username = form.cleaned_data['gottacon_id'].lower()
+            registered_user.username = form.cleaned_data['email'].lower()
             registered_user.set_password(form.cleaned_data['password'])
             registered_user.save()
             registered_user.backend = "django.contrib.auth.backends.ModelBackend"

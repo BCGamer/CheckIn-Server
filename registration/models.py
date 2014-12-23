@@ -19,7 +19,11 @@ class RegisteredUser(AbstractUser):
     reg_errors = models.TextField(blank=True)
 
     verification_received = models.BooleanField(default=False)
-    signed_waiver = models.BooleanField(default=False)
+
+    age_under_18 = models.BooleanField(default=False)
+    waiver_signed = models.BooleanField(default=False)
+    guardian_name = models.CharField(max_length=50, blank=True, null=True)
+    guardian_phone = models.CharField(max_length=50, blank=True, null=True)
 
     hostname = models.CharField(max_length=50, blank=True)
     mac = models.CharField(max_length=20, blank=True, null=True)
@@ -41,8 +45,6 @@ class RegisteredUser(AbstractUser):
 
 
 class ResponseCode(models.Model):
-
-
 
     good_to_go = models.BooleanField(default=False)
     code = models.CharField(max_length=6)

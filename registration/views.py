@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from registration.models import RegisteredUser
 from unix_mac import get_mac_address
-from registration.forms import RegistrationForm, VerificationResponseForm
+from registration.forms import RegistrationForm, VerificationResponseForm, WaiverForm
 from django.template import loader, RequestContext
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
@@ -35,7 +35,6 @@ def login_user(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            #return redirect('verify')
             return redirect('waiver')
 
 
@@ -68,7 +67,6 @@ def register(request):
 
             login(request, registered_user)
 
-            #return redirect('verify')
             return redirect('waiver')
 
 
@@ -83,9 +81,16 @@ def waiver(request):
 
     registered_user = request.user
 
+    form = WaiverForm(request.POST or None)
+
     context = {
         'registered_user': registered_user
     }
+
+    if request.POST:
+        if form.is_valid():
+            registered_user = form.save(commit=False)
+
 
     return render(request, 'registration/waiver.html', context)
 

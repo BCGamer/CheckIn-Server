@@ -27,7 +27,7 @@ class RegistrationForm(forms.ModelForm):
         cleaned_data = super(RegistrationForm, self).clean()
 
         password1 = cleaned_data.get('password')
-        password2= cleaned_data.get('password_2')
+        password2 = cleaned_data.get('password_2')
 
         if password1 != password2:
             return forms.ValidationError("Passwords are not the same.")
@@ -101,3 +101,20 @@ class VerificationResponseForm(forms.Form):
 
         self.antivirus_good = True
 
+
+class WaiverForm(forms.ModelForm):
+    age_under_18 = forms.BooleanField(required=False, label="I am under the age of 18")
+    waiver_signed = forms.BooleanField(required=True, label="I acknowledge and accept")
+
+    # these next two properties should be required if 'age_under_18 = true'
+    guardian_name = forms.CharField(required=False, label="Parent or Legal Guardian name")
+    guardian_phone = forms.CharField(required=False, label="Emergency phone number")
+
+    class Meta:
+        model = RegisteredUser
+        fields = (
+            'age_under_18',
+            'waiver_signed',
+            'guardian_name',
+            'guardian_phone',
+        )

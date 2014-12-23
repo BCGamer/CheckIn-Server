@@ -21,17 +21,21 @@ class RegisteredUserAdmin(UserAdmin):
                                          'email',
                                          'nickname'
         )}),
-        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
-                                       'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
         (_('PC Info'), {'fields': ('ip_address', 'mac')}),
+        (_('Waiver'), {'fields': ('age_under_18',
+                                  'waiver_signed',
+                                  'guardian_name',
+                                  'guardian_phone',
+        )}),
         (_('Gottacon Requirements'), {'fields': ('verification_received',
                                                  'has_antivirus',
                                                  'has_firewall',
                                                  'dhcp_enabled',
-                                                 'signed_waiver',
                                                  'reg_errors',
         )}),
+        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
+                                       'groups', 'user_permissions')}),
     )
 
     add_fieldsets = (

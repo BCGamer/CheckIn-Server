@@ -37,7 +37,6 @@ def login_user(request):
             login(request, user)
             return redirect('waiver')
 
-
     return render(request, 'registration/login.html', {'form': form})
 
 
@@ -69,7 +68,6 @@ def register(request):
 
             return redirect('waiver')
 
-
         else:
             return render(request, 'registration/register.html', {'form': form})
 
@@ -83,28 +81,23 @@ def waiver(request):
 
     form = WaiverForm(request.POST or None)
 
-    context = {
-        'registered_user': registered_user
-    }
+    if registered_user.waiver_signed:
+        return redirect('verify')
 
     if request.POST:
         if form.is_valid():
-            registered_user = form.save(commit=False)
+            registered_user.age_under_18 = form.cleaned_data['age_under_18']
+            registered_user.waiver_signed = form.cleaned_data['waiver_signed']
+            registered_user.guardian_name = form.cleaned_data['guardian_name']
+            registered_user.guardian_phone = form.cleaned_data['guardian_phone']
+            registered_user.save()
 
+            return redirect('verify')
+        else:
+            return render(request, 'registration/waiver.html', {'form': form})
 
-    return render(request, 'registration/waiver.html', context)
+    return render(request, 'registration/waiver.html', {'form': form})
 
-
-@login_required
-def waiver_submit(request):
-
-    registered_user = request.user
-
-    context = {
-        'registered_user': registered_user
-    }
-
-    return render(request, 'registration/verification.html', context)
 
 @login_required
 def verify(request):

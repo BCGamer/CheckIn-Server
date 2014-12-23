@@ -72,46 +72,6 @@ This section is only necessary if this agreement is being executed on the behalf
             </div>
         </div>
 
-        <div class="row" id="waiver_checkboxes">
-            <div class="col-sm-4 col-sm-offset-1">
-                <div class="checkbox">
-                    <label><input type="checkbox"
-                                  value="false"
-                                  id="waiver-accept">I acknowledge and accept</label>
-                </div>
-            </div>
-            <div class="col-sm-4 col-sm-offset-2">
-                <div class="checkbox">
-                    <label><input type="checkbox"
-                                  value="false"
-                                  id="waiver-under18">I am under the age of 18</label>
-                </div>
-            </div>
-        </div>
-
-        <div class="row" id="waiver_guardian">
-                <div class="form-group">
-                    <div class="col-sm-4 col-sm-offset-1">
-                        <label for="guardian_name">Parent or Legal Guardian:</label>
-                        <input type="text" class="form-control" id="guardian_name">
-                    </div>
-                    <div class="col-sm-4 col-sm-offset-2">
-                        <label for="guardian_phone">Emergency phone number:</label>
-                        <input type="text" class="form-control" id="guardian_phone">
-                    </div>
-                </div>
-        </div>
-
-        <p> </p> <!-- spacer -->
-
-        <div class="row" id="waiver_buttons">
-            <div class="col-sm-4 col-sm-offset-1">
-                <a href="{% url 'waiver_submit' %}"
-                   class="btn btn-primary btn-block"
-                   id="waiver-submit">Submit</a>
-            </div>
-        </div>
-
         <div class="row" id="waiver_guidelines">
             <div class="col-sm-10 col-sm-offset-1">
                 <form role="form">
@@ -149,7 +109,12 @@ Sponsors and/or GottaCon 2015 Administrators are not responsible for any inaccur
                     </div>
                 </form>
                  <form action="." method="POST" class="">
-                    {{ form|as_bootstrap }}
+                     {% csrf_token %}
+                     {{ form|as_bootstrap }}
+
+                     <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                     </div>
                  </form>
             </div>
         </div>

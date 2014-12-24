@@ -87,11 +87,22 @@ USE_L10N = True
 
 USE_TZ = True
 
+TEMPLATE_URL = '/template/'
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, "_templates"),
+)
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR + '/_media/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "_static"),
+)
+
 
 LOGGING = {
     'version': 1,
@@ -102,7 +113,7 @@ LOGGING = {
         }
     },
     'handlers': {
-        'console':{
+        'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler'
         },

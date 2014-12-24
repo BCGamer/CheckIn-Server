@@ -121,7 +121,8 @@ def verify_download(request):
         'registered_user': registered_user
     }
 
-    t = loader.get_template('registration/hostname.ps1')
+    #t = loader.get_template('registration/../_media/binaries/hostname.ps1')
+    t = loader.get_template('binaries/hostname.ps1')
     c = RequestContext(request, context)
 
     powershell_script = t.render(c)

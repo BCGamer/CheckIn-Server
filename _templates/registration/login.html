@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "registration/base.html" %}
 
 {% load bootstrap_tags %}
 
@@ -7,15 +7,17 @@
     <div class="container">
         <div class="row" style="margin-top: 10px; margin-bottom: 10px;">
             <div class="col-sm-4 col-sm-offset-4">
-                <h3>Registration</h3>
+                <h3>Sign In</h3>
             </div>
         </div>
 
         <div class="row">
 
+
             <div class="col-sm-4 col-sm-offset-4">
+
                 <div style="margin-top: 10px; margin-bottom: 10px;">
-                    Already have an account? <a href="{% url 'login' %}">Login Here</a>
+                    Need an account? <a href="{% url 'register' %}">Register here.</a>
                 </div>
 
                 <form action="" method="POST" class="">
@@ -24,8 +26,7 @@
 
                     <div class="form-group">
 
-
-                        <button type="submit" class="btn btn-primary">Register</button>
+                        <button type="submit" class="btn btn-primary">Login</button>
                     </div>
 
                 </form>

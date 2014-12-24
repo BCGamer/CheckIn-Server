@@ -54,7 +54,7 @@ I hereby acknowledge that I desire to participate in the computer gaming event(s
             </div>
         </div>
 
-        <div class="row" id="waiver_parental">
+        <div class="row" id="waiver_parental" style="display:none;">
             <div class="col-sm-10 col-sm-offset-1">
                 <form role="form">
                     <div class="form-group">
@@ -108,14 +108,57 @@ GottaCon 2015 officials along with Sponsors execute all facets of the event and 
 Sponsors and/or GottaCon 2015 Administrators are not responsible for any inaccurate information, whether caused by the Official Web Site or by the Web Site users or by any of the equipment or programming associated with or utilized in the event or the Tournament or by any technical or human error which may occur in the processing of Tournament results. GottaCon 2015 Administrators/Sponsors assume NO liability for any injury, loss, or damage of any kind arising from or in connection with any person’s participation in the Event or Tournament, including without limitation, participation in any real life activity, or injury, loss or damage sustained from use of any prize won. If for any reason the Event or the Tournament is not capable of running as planned, including infection by computer virus’, bugs, tampering, unauthorized intervention, fraud, technical failures, or any other causes beyond the control of the GottaCon 2015 Administrator’s/Sponsors which corrupt or affect the administration, security, fairness, integrity, or proper conduct of the Event or the Tournament, GottaCon 2015 Administrator’s/Sponsors reserve the right at their sole discretion to cancel, terminate, modify or suspend the Event and the Tournament without refund. By participating in the Tournament, each Participant agrees to be bound by the Official Rules. GOTTACON 2015 ADMINISTRATORS/SPONSORS SHALL NOT BE LIABLE FOR PUNITIVE, INCIDENTAL, CONSEQUENTIAL OR SPECIAL DAMAGES WHETHER OR NOT SUCH DAMAGES COULD HAVE BEEN FORESEEN AND WHETHER OR NOT SPONSORS OR ANY SPONSOR OR ADMINISTRATOR RECEIVED NOTICE THEREOF.</textarea>
                     </div>
                 </form>
-                 <form action="." method="POST" class="">
-                     {% csrf_token %}
-                     {{ form|as_bootstrap }}
 
-                     <div class="form-group">
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                     </div>
-                 </form>
+            </div>
+        </div>
+
+        <div class="row" id="dynamic_form">
+            <div class="col-sm-10 col-sm-offset-1">
+                <form role="form">
+                    <div id="div_{{ form.waiver_signed.id_for_label }}" class="form-group">
+                        {{ form.waiver_signed.errors }}
+                        <div class="checkbox">
+                            <label for="{{ form.waiver_signed.id_for_label }}" class="required-field">
+                                {{ form.waiver_signed }}
+                                I acknowledge and accept
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="div_{{ form.age_under_18.id_for_label }}" class="form-group">
+                        {{ form.age_under_18.errors }}
+                        <div class="checkbox">
+                            <label for="{{ form.age_under_18.id_for_label }}" class="required-field">
+                                {{ form.age_under_18 }}
+                                I am under the age of 18
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="div_{{ form.guardian_name.id_for_label }}" class="form-group" style="display:none;">
+                       {{ form.guardian_name.errors }}
+                       <label for="{{ form.guardian_name.id_for_label }}" class="control-label">
+                          Parent or Legal Guardian name:
+                       </label>
+                       <input class="form-control" id="{{ form.guardian_name.id_for_label }}" type="text" name="guardian_name">
+                    </div>
+
+                    <div id="div_{{ form.guardian_phone.id_for_label }}" class="form-group" style="display:none;">
+                       {{ form.guardian_phone.errors }}
+                       <label for="{{ form.guardian_phone.id_for_label }}" class="control-label">
+                          Emergency phone number:
+                       </label>
+                       <input class="form-control" id="{{ form.guardian_phone.id_for_label }}" type="text" name="guardian_phone">
+                    </div>
+
+                </form>
+
+                <form action="." method="POST" class="">
+                    <div class="form-group">
+                        <button id="id_submit_button" type="submit" class="btn btn-primary" disabled="true">Submit</button>
+                    </div>
+
+                </form>
             </div>
         </div>
     </div>
@@ -124,5 +167,5 @@ Sponsors and/or GottaCon 2015 Administrators are not responsible for any inaccur
 {% endblock body %}
 
 {% block scripts %}
-
+    <script type="text/javascript" src="{% static "js/waiver.js" %}"></script>
 {% endblock scripts %}

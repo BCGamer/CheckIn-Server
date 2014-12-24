@@ -110,8 +110,6 @@ class WaiverForm(forms.ModelForm):
     guardian_name = forms.CharField(required=False, label="Parent or Legal Guardian name")
     guardian_phone = forms.CharField(required=False, label="Emergency phone number")
 
-    waiver_1 = forms.CharField(widget=forms.Textarea())
-
     class Meta:
         model = RegisteredUser
         fields = (

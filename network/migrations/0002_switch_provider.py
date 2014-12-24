@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('networkcontrol', '0001_initial'),
+        ('network', '0001_initial'),
     ]
 
     operations = [

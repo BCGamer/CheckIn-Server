@@ -1,5 +1,5 @@
 from django.contrib import admin
-from networkcontrol.models import Switch
+from network.models import Switch
 from django import forms
 
 

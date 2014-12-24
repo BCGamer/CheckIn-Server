@@ -2,9 +2,9 @@ import logging
 import telnetlib
 
 
-from networkcontrol.providers.base import BaseSwitchBackend
-from networkcontrol.providers import registry
-from networkcontrol.exceptions import SwitchNotConnected
+from network.providers.base import BaseSwitchBackend
+from network.providers import registry
+from network.exceptions import SwitchNotConnected
 
 logger = logging.getLogger(__name__)
 

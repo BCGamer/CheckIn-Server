@@ -1,5 +1,5 @@
 from django.db import models
-from networkcontrol.providers import registry
+from network.providers import registry
 
 
 class Switch(models.Model):

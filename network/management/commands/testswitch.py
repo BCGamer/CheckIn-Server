@@ -1,6 +1,6 @@
 import logging
 
-from networkcontrol.models import Switch
+from network.models import Switch
 
 
 from django.core.management.base import BaseCommand, CommandError

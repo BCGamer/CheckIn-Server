@@ -42,11 +42,11 @@ INSTALLED_APPS = (
     'django_forms_bootstrap',
     'registration',
 
-    'networkcontrol.providers.hp',
-    'networkcontrol.providers.cisco',
-    'networkcontrol.providers.mikrotik',
+    'network.providers.hp',
+    'network.providers.cisco',
+    'network.providers.mikrotik',
 
-    'networkcontrol',
+    'network',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -59,9 +59,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'gottacon.urls'
+ROOT_URLCONF = 'check_in.urls'
 
-WSGI_APPLICATION = 'gottacon.wsgi.application'
+WSGI_APPLICATION = 'check_in.wsgi.application'
 
 
 # Database

@@ -7,14 +7,14 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('networkcontrol', '0005_auto_20141011_0337'),
+        ('network', '0006_switch_requires_authentication'),
     ]
 
     operations = [
         migrations.AddField(
             model_name='switch',
-            name='requires_authentication',
-            field=models.BooleanField(default=True),
+            name='port',
+            field=models.IntegerField(default=22),
             preserve_default=True,
         ),
     ]

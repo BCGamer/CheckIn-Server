@@ -1,10 +1,10 @@
-from networkcontrol.providers.base import BaseSwitchBackend
-from networkcontrol.providers import registry
+from network.providers.base import BaseSwitchBackend
+from network.providers import registry
 
-class CiscoSwitchBackend(BaseSwitchBackend):
+class MikrotikSwitchBackend(BaseSwitchBackend):
 
-    id = 'CiscoSwitch'
-    name = 'Cisco Switch'
+    id = 'MikrotikSwitch'
+    name = 'Mikrotik Switch'
 
     def connect(self):
         raise NotImplementedError()
@@ -25,4 +25,4 @@ class CiscoSwitchBackend(BaseSwitchBackend):
         raise NotImplementedError()
 
 
-registry.register(CiscoSwitchBackend)
+registry.register(MikrotikSwitchBackend)

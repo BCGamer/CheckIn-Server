@@ -13,6 +13,7 @@ class Switch(models.Model):
 
     vlan1 = models.IntegerField(default=70, verbose_name='Dirty')
     vlan2 = models.IntegerField(default=50, verbose_name='Clean')
+    ports = models.IntegerField(default=24, verbose_name='# of Ports')
 
     requires_authentication = models.BooleanField(default=True)
 

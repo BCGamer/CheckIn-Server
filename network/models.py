@@ -57,3 +57,5 @@ class Switch(models.Model):
     def disconnect(self):
         provider = self.get_provider()
         provider.disconnect()
+
+#class VLAN(models.Model):

@@ -1,5 +1,6 @@
 from django.contrib import admin
 from network.models import Switch
+from network.models import VLAN
 from django import forms
 
 
@@ -8,6 +9,7 @@ class switchForm(forms.ModelForm):
         model = Switch
         widgets = {
             'password': forms.PasswordInput(render_value=True),
+
         }
         fields = ('password',)
 
@@ -17,8 +19,8 @@ class SwitchAdmin(admin.ModelAdmin):
                     'provider',
                     'ip',
                     'port',
-                    'vlan1',
-                    'vlan2',
+                    'switch_vlan_dirty',
+                    'switch_vlan_clean',
                     'enabled',
                     'ports')
     ordering = ('ip',)
@@ -28,8 +30,16 @@ class SwitchAdmin(admin.ModelAdmin):
         (None, {'fields': ('name', 'provider', 'enabled', 'ports')}),
         ('Connectivity', {'fields': ('ip', 'port')}),
         ('Authentication', {'fields': ('username', 'password')}),
-        ('VLAN', {'fields': ('vlan1', 'vlan2')}),
+        ('VLAN', {'fields': ('switch_vlan_dirty', 'switch_vlan_clean')}),
     )
 
 
+class VLANAdmin(admin.ModelAdmin):
+    list_display = ('vlan_name',
+                    'vlan_num',
+                    'vlan_type')
+
+    ordering = ('vlan_num',)
+
 admin.site.register(Switch, SwitchAdmin)
+admin.site.register(VLAN, VLANAdmin)

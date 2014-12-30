@@ -11,8 +11,16 @@ class Switch(models.Model):
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
 
-    vlan1 = models.IntegerField(default=70, verbose_name='Dirty')
-    vlan2 = models.IntegerField(default=50, verbose_name='Clean')
+    switch_vlan_dirty = models.ForeignKey('network.VLAN', verbose_name='Dirty',
+                                          blank='true', null='true',
+                                          related_name='switch_vlan_dirty',
+                                          limit_choices_to={'vlan_type': 'DI'})
+
+    switch_vlan_clean = models.ForeignKey('network.VLAN', verbose_name='Clean',
+                                          blank='true', null='true',
+                                          related_name='switch_vlan_clean',
+                                          limit_choices_to={'vlan_type': 'CL'},)
+
     ports = models.IntegerField(default=24, verbose_name='# of Ports')
 
     requires_authentication = models.BooleanField(default=True)
@@ -58,4 +66,24 @@ class Switch(models.Model):
         provider = self.get_provider()
         provider.disconnect()
 
-#class VLAN(models.Model):
+
+class VLAN(models.Model):
+    DIRTY = 'DI'
+    CLEAN = 'CL'
+    NONE = 'NO'
+    TYPES_OF_VLANS = (
+        (DIRTY, 'Dirty'),
+        (CLEAN, 'Clean'),
+        (NONE, 'None'),
+    )
+
+    vlan_name = models.CharField(max_length=50, verbose_name='Name')
+    vlan_num = models.IntegerField(verbose_name='VLAN #')
+    vlan_type = models.CharField(max_length=2, verbose_name='Type',
+                                 choices=TYPES_OF_VLANS,
+                                 default=NONE)
+    vlan_desc = models.TextField(verbose_name='Description',
+                                 null='true', blank='true')
+
+    def __unicode__(self):
+        return '{0}'.format(self.vlan_name)

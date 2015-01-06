@@ -45,23 +45,37 @@ class Switch(models.Model):
     def connect(self):
         provider = self.get_provider()
         provider.connect(self)
-
+    '''
     def get_shell(self):
         provider = self.get_provider()
         provider.get_interactive_shell()
+    '''
+    def get_shell(self):
+        provider = self.get_provider()
+        provider.invoke_shell()
+        # Clean the initial data buffer
+        provider.receive_data()
 
     def run_cmd(self, cmd):
         provider = self.get_provider()
-        output = provider.run_command(cmd)
+        provider.run_command(cmd)
+        output = provider.receive_data()
         return output
 
+    def flip_vlan(self, mac):
+        # Need to deal with failure still
+        provider = self.get_provider()
+        port = provider.find_mac_address(mac)
+        provider.change_vlan(port, self.switch_vlan_clean.vlan_num)
+
+    '''
     def get_channel(self):
         self.connect()
         provider = self.get_provider()
         chan = provider.invoke_shell()
 
         return chan
-
+    '''
     def disconnect(self):
         provider = self.get_provider()
         provider.disconnect()

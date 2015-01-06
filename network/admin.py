@@ -16,13 +16,10 @@ class switchForm(forms.ModelForm):
 
 class SwitchAdmin(admin.ModelAdmin):
     list_display = ('name',
-                    'provider',
-                    'ip',
-                    'port',
-                    'switch_vlan_dirty',
-                    'switch_vlan_clean',
+                    'provider', 'ip', 'port',
+                    'switch_vlan_dirty', 'switch_vlan_clean',
                     'enabled',
-                    'ports')
+                    'ports', 'id')
     ordering = ('ip',)
     form = switchForm
 

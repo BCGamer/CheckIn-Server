@@ -1,63 +1,67 @@
-import logging
-import telnetlib
-
-
 from network.providers.base import BaseSwitchBackend
 from network.providers import registry
-from network.exceptions import SwitchNotConnected
-
-logger = logging.getLogger(__name__)
-
+from netaddr import *
+import re
+import time
 
 class HPSwitchBackend(BaseSwitchBackend):
-
     id = 'HPSwitch'
     name = 'HP Switch'
-    conn = None
 
-    def connect(self, switch):
-        """
-        Need to get get past silly HP intro screens and enter password on connection.
-        Will end up with a cursor ready to accept commands.
-        """
-        if not self.conn:
-            conn = telnetlib.Telnet(switch.ip)
+    def invoke_shell(self):
+        # return self._client.invoke_shell()
+        self._shell = self._client.invoke_shell()
+        # HP has a mandatory welcome screen that must be bypassed
+        self.receive_data()
+        self._shell.send("\n")
+        self.receive_data()
 
-            conn.read_until("Press any key to continue")
-            conn.write("\n")
+    def find_mac_address(self, mac):
+        # Format as 00:00:00:00:00:00
+        mac = EUI(mac, dialect=mac_cisco)
 
-            conn.read_until("Password: ")
+        self.run_command("show mac %s" % mac)
+        output = self.receive_data()
+        output = self.remove_garbage(output)
+        port = re.findall(r'Located on Port : (\d+)', output)
 
-            conn.write("%s\n" % switch.password.encode('ascii'))
-            output = conn.read_until("# ", 2)
+        if len(port) == 1:
+            if int(port[0]) < int(self.switch.ports):
+                return port[0]
+            else:
+                # There is a problem
+                raise NotImplementedError()
+        else:
+            # There is a problem
+            raise NotImplementedError()
 
-            logger.info("Connected to switch %s at %s" % (switch.name, switch.ip))
+    def change_vlan(self, port, vlan):
+        self.run_command("configure")
+        self.receive_data()
+        self.run_command("vlan %s untagged %s" % (vlan, port))
+        self.receive_data()
+        self.run_command("interface %s" % port)
+        self.receive_data()
+        self.run_command("disable")
+        self.receive_data()
+        time.sleep(1)
+        self.run_command("enable")
+        self.receive_data()
 
-            self.conn = conn
-
-        return self.conn
-
-    def run_command(self, command):
-
-        if not self.conn:
-            raise SwitchNotConnected("Switch is not connected!")
-
-        command = str(command)
-
-        self.conn.write("%s\n" % command)
-
-        output = self.conn.read_until("# ")
-
-        return output
-
-    def find_mac_address(self, ip):
-        raise NotImplementedError()
-
-    def change_vlan(self, mac_address, vlan_id):
-        raise NotImplementedError()
 
     def show_port(self, mac_address):
         raise NotImplementedError()
 
+    @staticmethod
+    def remove_garbage(message):
+        hp_re1 = re.compile(r'(\[\d+[HKJ])|(\[\?\d+[hl])|(\[\d+)|(\;\d+\w?)')
+        hp_re2 = re.compile(r'([E]\b)')
+        hp_re3 = re.compile(ur'[\u001B]+')
+
+        message = hp_re1.sub("", message)
+        message = hp_re2.sub("", message)
+        message = hp_re3.sub("", message)
+
+        return message
 
 registry.register(HPSwitchBackend)

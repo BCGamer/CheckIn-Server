@@ -6,6 +6,10 @@ class MikrotikSwitchBackend(BaseSwitchBackend):
     id = 'MikrotikSwitch'
     name = 'Mikrotik Switch'
 
+    '''
+    /interface ethernet switch unicast-fdb>> print terse where mac-address="00:0C:29:52:14:C9"
+    '''
+
     def connect(self):
         raise NotImplementedError()
 

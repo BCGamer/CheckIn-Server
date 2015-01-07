@@ -32,9 +32,7 @@ class SwitchAdmin(admin.ModelAdmin):
 
 
 class VLANAdmin(admin.ModelAdmin):
-    list_display = ('vlan_name',
-                    'vlan_num',
-                    'vlan_type')
+    list_display = ('vlan_name', 'vlan_num', 'vlan_type',)
 
     ordering = ('vlan_num',)
 

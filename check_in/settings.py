@@ -87,21 +87,23 @@ USE_L10N = True
 
 USE_TZ = True
 
-TEMPLATE_URL = '/template/'
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, "_templates"),
-)
+STATIC_URL = '/s/'
+STATIC_ROOT = os.path.join(BASE_DIR, "_static")
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR + '/_media/'
+TEMPLATE_URL = '/t/'
+#TEMPLATE_DIRS = (
+#    os.path.join(BASE_DIR, "_templates"),
+#)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
-STATIC_URL = '/static/'
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "_static"),
-)
+
+#STATICFILES_DIRS = (
+#    os.path.join(BASE_DIR, "_static"),
+#)
+
+#print os.path.join(BASE_DIR, "_static")
 
 
 LOGGING = {

@@ -82,6 +82,7 @@ class Switch(models.Model):
 
 
 class VLAN(models.Model):
+    # Types of VLANs
     DIRTY = 'DI'
     CLEAN = 'CL'
     NONE = 'NO'
@@ -94,8 +95,7 @@ class VLAN(models.Model):
     vlan_name = models.CharField(max_length=50, verbose_name='Name')
     vlan_num = models.IntegerField(verbose_name='VLAN #')
     vlan_type = models.CharField(max_length=2, verbose_name='Type',
-                                 choices=TYPES_OF_VLANS,
-                                 default=NONE)
+                                 choices=TYPES_OF_VLANS, default=NONE)
     vlan_desc = models.TextField(verbose_name='Description',
                                  null='true', blank='true')
 

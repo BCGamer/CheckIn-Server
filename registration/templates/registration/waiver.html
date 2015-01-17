@@ -137,20 +137,22 @@ Sponsors and/or GottaCon 2015 Administrators are not responsible for any inaccur
                         </div>
                     </div>
 
-                    <div id="div_{{ form.guardian_name.id_for_label }}" class="form-group" style="display:none;">
-                       {{ form.guardian_name.errors }}
-                       <label for="{{ form.guardian_name.id_for_label }}" class="control-label">
-                          Parent or Legal Guardian name:
-                       </label>
-                       <input class="form-control" id="{{ form.guardian_name.id_for_label }}" type="text" name="guardian_name">
-                    </div>
+                    <div id="under_18_fields" style="display: none;">
+                        <div id="div_{{ form.guardian_name.id_for_label }}" class="form-group" >
+                           {{ form.guardian_name.errors }}
+                           <label for="{{ form.guardian_name.id_for_label }}" class="control-label">
+                              Parent or Legal Guardian name:
+                           </label>
+                           <input class="form-control" id="{{ form.guardian_name.id_for_label }}" type="text" name="guardian_name">
+                        </div>
 
-                    <div id="div_{{ form.guardian_phone.id_for_label }}" class="form-group" style="display:none;">
-                       {{ form.guardian_phone.errors }}
-                       <label for="{{ form.guardian_phone.id_for_label }}" class="control-label">
-                          Emergency phone number:
-                       </label>
-                       <input class="form-control" id="{{ form.guardian_phone.id_for_label }}" type="text" name="guardian_phone">
+                        <div id="div_{{ form.guardian_phone.id_for_label }}" class="form-group" >
+                           {{ form.guardian_phone.errors }}
+                           <label for="{{ form.guardian_phone.id_for_label }}" class="control-label">
+                              Emergency phone number:
+                           </label>
+                           <input class="form-control" id="{{ form.guardian_phone.id_for_label }}" type="text" name="guardian_phone">
+                        </div>
                     </div>
 
                     <div class="form-group">

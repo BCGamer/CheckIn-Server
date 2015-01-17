@@ -4,7 +4,7 @@ from network.models import VLAN
 from django import forms
 
 
-class switchForm(forms.ModelForm):
+class SwitchForm(forms.ModelForm):
     class Meta:
         model = Switch
         widgets = {
@@ -21,7 +21,7 @@ class SwitchAdmin(admin.ModelAdmin):
                     'enabled',
                     'ports', 'id')
     ordering = ('ip',)
-    form = switchForm
+    form = SwitchForm
 
     fieldsets = (
         (None, {'fields': ('name', 'provider', 'enabled', 'ports')}),

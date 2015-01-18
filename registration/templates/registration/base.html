@@ -6,6 +6,7 @@
 
     <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}" />
     <link rel="stylesheet" href="{% static "css/bootstrap-theme.css" %}" />
+    <link rel="stylesheet" href="{% static "css/checkin.css" %}" />
 
     <!-- Favicons -->
     <link rel="shortcut icon" type="image/png" href="{% static "img/favicon.ico" %}"/>
@@ -55,6 +56,14 @@
             </div><!--/.nav-collapse -->
         </div><!--/.container-fluid -->
     </div>
+</div>
+
+<div class="container">
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
 </div>
 
 {% block body %}

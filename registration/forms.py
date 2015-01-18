@@ -1,6 +1,27 @@
 from django import forms
 from registration.models import RegisteredUser
 from django.contrib.auth.forms import AuthenticationForm
+from django.conf import settings
+
+from macaddress.formfields import MACAddressField
+from network.models import VLAN
+
+
+class OverrideVerificationForm(forms.Form):
+
+    vlan = forms.ModelChoiceField(queryset=VLAN.objects.filter(vlan_type__in=VLAN.PUBLIC_VLANS))
+    override_code = forms.CharField(max_length=40, widget=forms.PasswordInput)
+    mac_address = MACAddressField()
+
+    def clean_override_code(self):
+
+        override_code = self.cleaned_data.get('override_code')
+
+        if override_code != settings.VERIFICATION_OVERRIDE_CODE:
+            raise forms.ValidationError("Invalid override code")
+
+        return override_code
+
 
 class RegistrationForm(forms.ModelForm):
 

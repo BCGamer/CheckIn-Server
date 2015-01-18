@@ -1,8 +1,10 @@
 from network.providers.base import BaseSwitchBackend
 from network.providers import registry
+from network.exceptions import MacNotFound
 from netaddr import *
 import re
 import time
+
 
 class HPSwitchBackend(BaseSwitchBackend):
     id = 'HPSwitch'
@@ -30,10 +32,10 @@ class HPSwitchBackend(BaseSwitchBackend):
                 return port[0]
             else:
                 # There is a problem
-                raise NotImplementedError()
+                raise MacNotFound()
         else:
             # There is a problem
-            raise NotImplementedError()
+            raise MacNotFound()
 
     def change_vlan(self, port, vlan):
         self.run_command("configure")

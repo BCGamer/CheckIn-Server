@@ -21,7 +21,7 @@ class BaseSwitchBackend(object):
             self._client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             self._client.connect(hostname=switch.ip, port=switch.port,
                                  username=switch.username, password=switch.password,
-                                 look_for_keys=False)
+                                 look_for_keys=False, allow_agent=False)
 
     def disconnect(self):
         if self.is_connected():

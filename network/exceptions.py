@@ -5,3 +5,7 @@ class SwitchNotConnected(Exception):
 
 class Timeout(Exception):
     pass
+
+
+class MacNotFound(Exception):
+    pass

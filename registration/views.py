@@ -1,18 +1,23 @@
 import json
 import logging
+from django.core.urlresolvers import reverse
 
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
-from registration.models import RegisteredUser
-from unix_mac import get_mac_address
-from registration.forms import RegistrationForm, VerificationResponseForm, WaiverForm, LoginForm
+from django.conf import settings
 from django.template import loader, RequestContext
-from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
+from django.contrib import messages
+
+from registration.models import RegisteredUser
+from unix_mac import get_mac_address
+from registration.forms import RegistrationForm, VerificationResponseForm, WaiverForm, LoginForm, \
+    OverrideVerificationForm
+from network.models import VLAN, Switch
 
 log = logging.getLogger(__name__)
 
@@ -104,17 +109,55 @@ def waiver(request):
 @login_required
 def verify(request):
 
+    if not request.META.get('REMOTE_ADDR').startswith(settings.DIRTY_SUBNETS):
+        return redirect('verified')
+
     registered_user = request.user
 
+    override_form = OverrideVerificationForm()
+
     context = {
-        'registered_user': registered_user
+        'registered_user': registered_user,
+        'override_form': override_form,
     }
 
     return render(request, 'registration/verification.html', context)
 
 
+
+@login_required
+@require_POST
+def override_verification(request):
+
+    form = OverrideVerificationForm(request.POST or None)
+
+    if form.is_valid():
+        vlan = form.cleaned_data.get('vlan')
+        mac = form.cleaned_data.get('mac_address')
+
+        if Switch.objects.flip_vlan(mac, vlan.vlan_num):
+            # Successfully switched vlan for mac, redirect to success page
+            return redirect('verified')
+        else:
+            # Could not find mac or something went wrong - redirect to verify page with error
+            messages.error(request, 'big bada boom')
+
+    else:
+        for field, error in form.errors.items():
+            messages.error(request, '%s: %s' % (field.title(), error[0]))
+
+    return redirect(reverse('verify'))
+
+
+@login_required
+def verify_completed(request):
+
+    return render(request, 'registration/verification_complete.html')
+
+
 @login_required
 def verify_download(request):
+
     registered_user = request.user
 
     context = {

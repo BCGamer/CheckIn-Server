@@ -40,8 +40,9 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'django_extensions',
     'django_forms_bootstrap',
-    'registration',
+    'django_object_actions',
 
+    'registration',
     'network.providers.hp',
     'network.providers.cisco',
     'network.providers.mikrotik',
@@ -133,3 +134,9 @@ LOGGING = {
 
     }
 }
+
+
+VERIFICATION_OVERRIDE_CODE = 'BCGamer12'
+
+
+DIRTY_SUBNETS = '10.5.50'

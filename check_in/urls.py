@@ -17,8 +17,10 @@ urlpatterns = patterns('',
 
     url(r'^verify/$', 'registration.views.verify', name='verify'),
     url(r'^verify/check/$', 'registration.views.check_verification', name='check_verification'),
+    url(r'^verify/override/$', 'registration.views.override_verification', name='override_verification'),
     url(r'^verify/dl/$', 'registration.views.verify_download', name='verify_dl'),
     url(r'^verify/uuidforip/$', 'registration.views.get_uuid_for_ip', name='uuid_for_ip'),
+    url(r'^verified/$', 'registration.views.verify_completed', name='verified'),
 
     url(r'^verification_response/$', 'registration.views.verification_response', name='verification_resp'),
 

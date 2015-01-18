@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'django_extensions',
     'django_forms_bootstrap',
+    'djcelery',
 
     'registration',
     'network.providers.hp',
@@ -138,6 +139,8 @@ LOGGING = {
 BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
 CELERY_TASK_SERIALIZER = "json"
+
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
 
 VERIFICATION_OVERRIDE_CODE = 'BCGamer12'

@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django_object_actions import DjangoObjectActions
 from network.forms import VlanForm
 from network.models import Switch, UplinkPort
 from network.models import VLAN

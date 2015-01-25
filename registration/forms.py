@@ -4,12 +4,12 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.conf import settings
 
 from macaddress.formfields import MACAddressField
-from network.models import VLAN
+from network.models import Vlan
 
 
 class OverrideVerificationForm(forms.Form):
 
-    vlan = forms.ModelChoiceField(queryset=VLAN.objects.filter(vlan_type__in=VLAN.PUBLIC_VLANS))
+    vlan = forms.ModelChoiceField(queryset=Vlan.objects.filter(type__in=Vlan.PUBLIC_VLANS))
     override_code = forms.CharField(max_length=40, widget=forms.PasswordInput)
     mac_address = MACAddressField()
 

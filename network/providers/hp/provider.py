@@ -66,4 +66,4 @@ class HPSwitchBackend(BaseSwitchBackend):
 
         return message
 
-registry.register(HPSwitchBackend)
+#registry.register(HPSwitchBackend)

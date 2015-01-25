@@ -20,7 +20,9 @@ class BackendRegistry(object):
 
     def as_choices(self):
         self.load()
-        for provider in self.get_list():
+        providers = self.get_list()
+        providers.sort()
+        for provider in providers:
             yield (provider.id, provider.name)
 
     def load(self):

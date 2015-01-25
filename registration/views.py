@@ -17,7 +17,7 @@ from registration.models import RegisteredUser
 from unix_mac import get_mac_address
 from registration.forms import RegistrationForm, VerificationResponseForm, WaiverForm, LoginForm, \
     OverrideVerificationForm
-from network.models import VLAN, Switch
+from network.models import Vlan, Switch
 
 log = logging.getLogger(__name__)
 

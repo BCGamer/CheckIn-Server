@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='VLAN',
+            name='Vlan',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('vlan_name', models.CharField(max_length=50, verbose_name=b'Name')),
@@ -39,13 +39,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='switch',
             name='switch_vlan_clean',
-            field=models.ForeignKey(related_name=b'switch_vlan_clean', verbose_name=b'Clean', blank=b'true', to='network.VLAN', null=b'true'),
+            field=models.ForeignKey(related_name=b'switch_vlan_clean', verbose_name=b'Clean', blank=b'true', to='network.Vlan', null=b'true'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='switch',
             name='switch_vlan_dirty',
-            field=models.ForeignKey(related_name=b'switch_vlan_dirty', verbose_name=b'Dirty', blank=b'true', to='network.VLAN', null=b'true'),
+            field=models.ForeignKey(related_name=b'switch_vlan_dirty', verbose_name=b'Dirty', blank=b'true', to='network.Vlan', null=b'true'),
             preserve_default=True,
         ),
         migrations.AlterField(

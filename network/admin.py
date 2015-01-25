@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from network.forms import VlanForm
 from network.models import Switch, UplinkPort
-from network.models import VLAN
+from network.models import Vlan
 from django import forms
 
 
@@ -11,10 +11,11 @@ class SwitchForm(forms.ModelForm):
     class Meta:
         model = Switch
         widgets = {
-            'password': forms.PasswordInput(render_value=True),
-
+            'ssh_pass': forms.PasswordInput(render_value=True),
+            'snmp_auth_pass': forms.PasswordInput(render_value=True),
+            'snmp_priv_pass': forms.PasswordInput(render_value=True),
         }
-        fields = ('password',)
+        fields = ('ssh_pass', 'snmp_auth_pass', 'snmp_priv_pass')
 
 
 class UplinkPortInline(admin.TabularInline):
@@ -24,7 +25,7 @@ class UplinkPortInline(admin.TabularInline):
 
 class SwitchAdmin(admin.ModelAdmin):
     list_display = ('name',
-                    'provider', 'ip', 'port',
+                    'provider', 'ip', 'ssh_port',
                     'switch_vlan_dirty', 'switch_vlan_clean',
                     'enabled',
                     'ports', 'id')
@@ -37,9 +38,9 @@ class SwitchAdmin(admin.ModelAdmin):
     form = SwitchForm
 
     fieldsets = (
-        (None, {'fields': ('name', 'provider', 'enabled', 'ports')}),
-        ('Connectivity', {'fields': ('ip', 'port')}),
-        ('Authentication', {'fields': ('username', 'password')}),
+        (None, {'fields': ('name', 'provider', 'ip', 'enabled', 'ports', )}),
+        ('SSH', {'fields': ('ssh_user', 'ssh_pass', 'ssh_port')}),
+        ('SNMP', {'fields': ('snmp_auth_pass', 'snmp_priv_pass', 'snmp_port', )}),
         ('VLAN', {'fields': ('switch_vlan_dirty', 'switch_vlan_clean')}),
     )
 
@@ -60,7 +61,7 @@ class SwitchAdmin(admin.ModelAdmin):
                 vlan = form.cleaned_data['vlan']
 
                 for switch in queryset:
-                    switch.change_vlan(vlan.vlan_num)
+                    switch.change_vlan(vlan.num)
 
                 self.message_user(request, 'Successfully changed switch VLan.')
 
@@ -82,10 +83,10 @@ class SwitchAdmin(admin.ModelAdmin):
     override_port_vlan.short_description = "Override port VLan"
 
 
-class VLANAdmin(admin.ModelAdmin):
-    list_display = ('vlan_name', 'vlan_num', 'vlan_type',)
+class VlanAdmin(admin.ModelAdmin):
+    list_display = ('name', 'num', 'type',)
 
-    ordering = ('vlan_num',)
+    ordering = ('num',)
 
 admin.site.register(Switch, SwitchAdmin)
-admin.site.register(VLAN, VLANAdmin)
+admin.site.register(Vlan, VlanAdmin)

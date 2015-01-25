@@ -36,6 +36,42 @@ class UplinkPort(models.Model):
 
 class Switch(models.Model):
 
+    # Types of SNMP Authentication
+    SNMP_AUTH_NONE = 'usmNoAuthProtocol'
+    SNMP_AUTH_MD5 = 'usmHMACMD5AuthProtocol'
+    SNMP_AUTH_SHA = 'usmHMACSHAAuthProtocol'
+    TYPES_OF_SNMP_AUTHENTICATION = (
+        (SNMP_AUTH_MD5, 'MD5'),
+        (SNMP_AUTH_SHA, 'SHA'),
+        (SNMP_AUTH_NONE, 'NONE'),
+    )
+
+    # Types of SNMP Privacy
+    SNMP_PRIV_DES = 'usmDESPrivProtocol'
+    SNMP_PRIV_AES128 = 'usmAesCfb128Protocol'
+    SNMP_PRIV_3DES = 'usm3DESEDEPrivProtocol'
+    SNMP_PRIV_AES192 = 'usmAesCfb192Protocol'
+    SNMP_PRIV_AES256 = 'usmAesCfb256Protocol'
+    SNMP_PRIV_NONE = 'usmAesCfb256Protocol'
+    TYPES_OF_SNMP_PRIVACY = (
+        (SNMP_PRIV_NONE, 'NONE'),
+        (SNMP_PRIV_DES, 'DES'),
+        (SNMP_PRIV_3DES, '3DES'),
+        (SNMP_PRIV_AES128, 'AES128'),
+        (SNMP_PRIV_AES192, 'AES192'),
+        (SNMP_PRIV_AES256, 'AES256'),
+    )
+
+    # Types of SNMP Security Level
+    SNMP_SEC_NONE = 'noAuthNoPriv'
+    SNMP_SEC_AUTH_NOPRIV = 'authNoPriv'
+    SNMP_SEC_AUTH_PRIV = 'AuthPriv'
+    TYPES_OF_SNMP_SECURITY = (
+        (SNMP_SEC_NONE, 'No Auth & No Priv'),
+        (SNMP_SEC_AUTH_NOPRIV, 'Auth & No Priv'),
+        (SNMP_SEC_AUTH_PRIV, 'Auth & Priv'),
+    )
+
     name = models.CharField(max_length=50)
     ip = models.GenericIPAddressField(verbose_name='IP Address')
 
@@ -45,9 +81,13 @@ class Switch(models.Model):
 
     snmp_port = models.IntegerField(default=161, verbose_name='Port', blank='true', null='true')
     snmp_auth_pass = models.CharField(max_length=50, verbose_name='Authentication Password', blank='true', null='true')
-    snmp_auth_type = models.CharField(max_length=50, verbose_name='Authentication Type', blank='true', null='true')
     snmp_priv_pass = models.CharField(max_length=50, verbose_name='Privacy Password', blank='true', null='true')
-    snmp_priv_type = models.CharField(max_length=50, verbose_name='Privacy Type', blank='true', null='true')
+    snmp_community = models.CharField(max_length=50, verbose_name='Community', blank='true', null='true')
+    snmp_username = models.CharField(max_length=50, verbose_name='Username', blank='true', null='true')
+
+    snmp_auth_type = models.CharField(max_length=50, verbose_name='Authentication Type', choices=TYPES_OF_SNMP_AUTHENTICATION, default=SNMP_AUTH_NONE)
+    snmp_priv_type = models.CharField(max_length=50, verbose_name='Privacy Type', choices=TYPES_OF_SNMP_PRIVACY, default=SNMP_PRIV_NONE)
+    snmp_security = models.CharField(max_length=50, verbose_name='Security Type', choices=TYPES_OF_SNMP_SECURITY, default=SNMP_SEC_NONE)
 
     switch_vlan_dirty = models.ForeignKey('network.Vlan', verbose_name='Dirty',
                                           blank='true', null='true',

@@ -19,3 +19,4 @@ redis==2.10.3
 six==1.7.3
 sqlparse==0.1.11
 wsgiref==0.1.2
+pysnmp==4.2.5

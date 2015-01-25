@@ -135,7 +135,7 @@ def override_verification(request):
         vlan = form.cleaned_data.get('vlan')
         mac = form.cleaned_data.get('mac_address')
 
-        if Switch.objects.flip_vlan(mac, vlan.vlan_num):
+        if Switch.objects.flip_vlan(mac, vlan.num):
             # Successfully switched vlan for mac, redirect to success page
             return redirect('verified')
         else:

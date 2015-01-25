@@ -38,10 +38,17 @@ class SwitchAdmin(admin.ModelAdmin):
     form = SwitchForm
 
     fieldsets = (
-        (None, {'fields': ('name', 'provider', 'ip', 'enabled', 'ports', )}),
-        ('SSH', {'fields': ('ssh_user', 'ssh_pass', 'ssh_port')}),
-        ('SNMP', {'fields': ('snmp_auth_pass', 'snmp_priv_pass', 'snmp_port', )}),
-        ('VLAN', {'fields': ('switch_vlan_dirty', 'switch_vlan_clean')}),
+        (None, {'fields': (('name', 'ip', 'ports', ),
+                           ('provider', ),
+                           'enabled', )}),
+        ('SSH', {'fields': (('ssh_user', 'ssh_pass', 'ssh_port', ),
+                            )}),
+        ('SNMP', {'fields': (('snmp_username', 'snmp_community', ),
+                             ('snmp_auth_pass', 'snmp_auth_type', ),
+                             ('snmp_priv_pass', 'snmp_priv_type', ),
+                             ('snmp_security', 'snmp_port', ),
+                             )}),
+        ('VLAN', {'fields': (('switch_vlan_dirty', 'switch_vlan_clean'), )}),
     )
 
     actions = [

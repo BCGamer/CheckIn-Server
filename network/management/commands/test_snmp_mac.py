@@ -1,18 +1,7 @@
 import logging
-import re
-from network.exceptions import MacNotFound
-
-import os, sys
-import socket
-import random
-from struct import pack, unpack
-from datetime import datetime as dt
 
 from pysnmp.entity.rfc3413.oneliner import cmdgen
-from pysnmp.proto.rfc1902 import Integer, IpAddress, OctetString
-
 from network.models import Switch
-
 
 from django.core.management.base import BaseCommand, CommandError
 
@@ -26,28 +15,39 @@ class Command(BaseCommand):
         switch = Switch.objects.get(id=1)
 
         ip = switch.ip
-        security_name = 'bcgamer'
+        security_name = switch.snmp_username
         auth_key = switch.snmp_auth_pass
         privacy_key = switch.snmp_priv_pass
 
-        value = (1,3,6,1,6,3,1,1,5,1)
+        mac_address_list = (1,3,6,1,2,1,17,4,3,1,1)
+
+
         #value = ('.1.3.6.1.6.3.1.1.5.1')
 
+        # Re-use this as much as possible!!
         cmdGen = cmdgen.CommandGenerator()
-        comm_data = cmdgen.UsmUserData(
-            security_name,
-            authKey=auth_key,
-            privKey=privacy_key,
-            authProtocol='usmNoAuthProtocol',
-            privProtocol='usmNoPrivProtocol'
+
+        errorIndication, errorStatus, errorIndex, varBindTable = cmdGen.nextCmd(
+            cmdgen.UsmUserData(
+                security_name, auth_key, privacy_key,
+                authProtocol=cmdgen.usmHMACSHAAuthProtocol,
+                privProtocol=cmdgen.usmAesCfb128Protocol
+            ),
+            cmdgen.UdpTransportTarget((ip, 161)),
+
+            mac_address_list
         )
-        transport = cmdgen.UdpTransportTarget((ip, 161))
 
-        real_fun = getattr(cmdGen, 'nextCmd')
-        res = (errorIndication, errorStatus, errorIndex, varBinds)\
-            = real_fun(comm_data, transport, value)
-
-        if not errorIndication is None or errorStatus is True:
-            print "Error: %s %s %s %s" % res
+        if errorIndication:
+            print(errorIndication)
         else:
-            print "%s" % varBinds
+            if errorStatus:
+                print('%s at %s' % (
+                    errorStatus.prettyPrint(),
+                    errorIndex and varBindTable[-1][int(errorIndex)-1] or '?'
+                    )
+                )
+            else:
+                for varBindTableRow in varBindTable:
+                    for name, val in varBindTableRow:
+                        print('%s = %s' % (name.prettyPrint(), val.prettyPrint()))

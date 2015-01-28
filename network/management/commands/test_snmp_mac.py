@@ -25,19 +25,19 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         switch = Switch.objects.get(id=1)
 
-        ip = '10.5.11.2'
-        securityName = 'bcgamer'
-        authKey = 'BCGamer2014!$'
-        privKey = 'BCGamer12'
+        ip = switch.ip
+        security_name = 'bcgamer'
+        auth_key = switch.snmp_auth_pass
+        privacy_key = switch.snmp_priv_pass
 
         value = (1,3,6,1,6,3,1,1,5,1)
         #value = ('.1.3.6.1.6.3.1.1.5.1')
 
         cmdGen = cmdgen.CommandGenerator()
         comm_data = cmdgen.UsmUserData(
-            securityName,
-            authKey=authKey,
-            privKey=privKey,
+            security_name,
+            authKey=auth_key,
+            privKey=privacy_key,
             authProtocol='usmNoAuthProtocol',
             privProtocol='usmNoPrivProtocol'
         )

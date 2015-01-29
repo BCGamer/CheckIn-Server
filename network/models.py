@@ -122,6 +122,10 @@ class Switch(models.Model):
             return registry.by_id(self.provider)
         return self._provider_cache
 
+    def snmp_findmac(self, mac):
+        provider = self.get_provider()
+
+
     def connect(self):
         provider = self.get_provider()
         provider.connect(self)

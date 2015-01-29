@@ -2,6 +2,7 @@ import paramiko
 import time
 
 from paramiko import SSHClient
+from pysnmp.entity.rfc3413.oneliner import cmdgen
 from network.exceptions import SwitchNotConnected, Timeout
 
 
@@ -10,6 +11,36 @@ class BaseSwitchBackend(object):
     switch = None
     _client = None
     _shell = None
+    _snmp = None
+    _snmp_user = None
+    _snmp_target = None
+
+    def snmp_device(self, switch):
+        self.switch = switch
+
+        self._snmp_user = cmdgen.UsmUserData(
+            switch.snmp_username,
+            switch.snmp_auth_pass,
+            switch.snmp_priv_pass,
+            authProtocol=cmdgen.usmHMACSHAAuthProtocol,
+            privProtocol=cmdgen.usmAesCfb128Protocol)
+
+        self._snmp_target = cmdgen.UdpTransportTarget((switch.ip, 161))
+
+        self._snmp = cmdgen.AsynCommandGenerator()
+
+    def snmp_walk(self, switch):
+        pass
+
+    def snmp_get(self, oid):
+        errorIndication, errorStatus, errorIndex, varBinds = self._snmp.getCmd(
+            self._snmp_user, self._snmp_target,
+            oid,
+            lookupNames=True, lookupValues=True
+        )
+        name, value = varBinds[0]
+
+        return name, value
 
     def connect(self, switch):
         self.switch = switch

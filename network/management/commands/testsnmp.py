@@ -22,4 +22,5 @@ class Command(BaseCommand):
         oid = '1.3.6.1.2.1.17.4.3.1.2.0.31.22.28.76.134'
         mac = '001f.161c.4c86'
 
-        switch.findmac(switch, mac)
+        # print "%s = %s" % (switch.snmp_findmac(mac))
+        switch.snmp_findmac(mac)

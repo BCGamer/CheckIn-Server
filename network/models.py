@@ -124,7 +124,10 @@ class Switch(models.Model):
 
     def snmp_findmac(self, mac):
         provider = self.get_provider()
+        provider.snmp_device(self)
+        provider.snmp_get('1.3.6.1.2.1.17.4.3.1.2.0.31.22.28.76.134')
 
+        # return
 
     def connect(self):
         provider = self.get_provider()

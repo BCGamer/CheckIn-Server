@@ -23,12 +23,13 @@ class BaseSwitchBackend(object):
             switch.snmp_auth_pass,
             switch.snmp_priv_pass,
 
-            authProtocol=cmdgen.usmHMACSHAAuthProtocol,
-            privProtocol=cmdgen.usmAesCfb128Protocol
-            # need to change these two lines to actually use
-            # authProtocol=switch.snmp_auth_type,
-            # privProtocol=switch.snmp_priv_type
-            # after fixing the database table to contain the proper string
+            authProtocol=tuple(map(int, switch.snmp_auth_type.split(','))),
+            privProtocol=tuple(map(int, switch.snmp_priv_type.split(',')))
+
+            # authProtocol=(1,3,6,1,6,3,10,1,1,3),
+            # privProtocol=(1,3,6,1,6,3,10,1,2,2)
+            # authProtocol=cmdgen.usmHMACSHAAuthProtocol,
+            # privProtocol=cmdgen.usmAesCfb128Protocol
         )
 
         self._snmp_target = cmdgen.UdpTransportTarget(

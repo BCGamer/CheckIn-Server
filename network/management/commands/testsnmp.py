@@ -12,7 +12,7 @@ class Command(BaseCommand):
     help = 'Does some switch stuffs'
 
     def handle(self, *args, **options):
-        switch = Switch.objects.get(id=2)
+        switch = Switch.objects.get(id=1)
 
         dot1dtpfdbaddress = '1.3.6.1.2.1.17.4.3.1.1'    # MAC address
         dot1dtpfdbport = '1.3.6.1.2.1.17.4.3.1.2'       # Bridge port
@@ -22,5 +22,5 @@ class Command(BaseCommand):
         oid = '1.3.6.1.2.1.17.4.3.1.2.0.31.22.28.76.134'
         mac = '001f.161c.4c86'
 
-        # print "%s = %s" % (switch.snmp_findmac(mac))
+        #print tuple(map(int, ((switch.snmp_auth_type).split(','))))
         print switch.snmp_findmac(mac)

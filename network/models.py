@@ -38,9 +38,9 @@ class UplinkPort(models.Model):
 class Switch(models.Model):
 
     # Types of SNMP Authentication
-    SNMP_AUTH_NONE = 'usmNoAuthProtocol'        # usmNoAuthProtocol
-    SNMP_AUTH_MD5 = 'usmHMACMD5AuthProtocol'    # usmHMACMD5AuthProtocol
-    SNMP_AUTH_SHA = 'usmHMACSHAAuthProtocol'    # usmHMACSHAAuthProtocol
+    SNMP_AUTH_NONE = '1,3,6,1,6,3,10,1,1,1'       # usmNoAuthProtocol
+    SNMP_AUTH_MD5 = '1,3,6,1,6,3,10,1,1,2'        # usmHMACMD5AuthProtocol
+    SNMP_AUTH_SHA = '1,3,6,1,6,3,10,1,1,3'        # usmHMACSHAAuthProtocol
     TYPES_OF_SNMP_AUTHENTICATION = (
         (SNMP_AUTH_MD5, 'MD5'),
         (SNMP_AUTH_SHA, 'SHA'),
@@ -48,12 +48,12 @@ class Switch(models.Model):
     )
 
     # Types of SNMP Privacy
-    SNMP_PRIV_DES = 'usmDESPrivProtocol'        # usmDESPrivProtocol
-    SNMP_PRIV_AES128 = 'usmAesCfb128Protocol'   # usmAesCfb128Protocol
-    SNMP_PRIV_3DES = 'usm3DESEDEPrivProtocol'   # usm3DESEDEPrivProtocol
-    SNMP_PRIV_AES192 = 'usmAesCfb192Protocol'   # usmAesCfb192Protocol
-    SNMP_PRIV_AES256 = 'usmAesCfb256Protocol'   # usmAesCfb256Protocol
-    SNMP_PRIV_NONE = 'usmAesCfb256Protocol'     # usmAesCfb256Protocol
+    SNMP_PRIV_DES = '1,3,6,1,6,3,10,1,2,2'        # usmDESPrivProtocol
+    SNMP_PRIV_AES128 = '1,3,6,1,6,3,10,1,2,4'     # usmAesCfb128Protocol
+    SNMP_PRIV_3DES = '1,3,6,1,6,3,10,1,2,3'       # usm3DESEDEPrivProtocol
+    SNMP_PRIV_AES192 = '1,3,6,1,4,1,9,12,6,1,1'   # usmAesCfb192Protocol
+    SNMP_PRIV_AES256 = '1,3,6,1,4,1,9,12,6,1,2'   # usmAesCfb256Protocol
+    SNMP_PRIV_NONE = '1,3,6,1,4,1,9,12,6,12'     # usmAesCfb256Protocol
     TYPES_OF_SNMP_PRIVACY = (
         (SNMP_PRIV_NONE, 'NONE'),
         (SNMP_PRIV_DES, 'DES'),
@@ -128,7 +128,6 @@ class Switch(models.Model):
         provider = self.get_provider()
         provider.snmp_device(self)
         dot1dtpfdbaddress = '1.3.6.1.2.1.17.4.3.1.1'
-        print dot1dtpfdbaddress
         device_macs = provider.snmp_walk(dot1dtpfdbaddress)
         for val in device_macs:
             # Convert pysnmp crap returns to proper strings
@@ -147,7 +146,6 @@ class Switch(models.Model):
         # This can have multiple results, loop through them
         for oid in matched_macs:
             dot1dtpfdbport = '1.3.6.1.2.1.17.4.3.1.2.' + str(oid)
-            print dot1dtpfdbport
             bridge = provider.snmp_get(dot1dtpfdbport)
 
             if bridge == ():
@@ -155,7 +153,6 @@ class Switch(models.Model):
 
             # We found a bridge, find interface index - 1 result
             ifindex = '1.3.6.1.2.1.2.2.1.1.' + str(bridge[0][1])
-            print ifindex
             interface = provider.snmp_get(ifindex)
 
             if interface == ():
@@ -165,7 +162,6 @@ class Switch(models.Model):
             # If valid, find interface name
             if interface[0][1] < self.ports and interface[0][1] not in (self.uplink_ports.values_list('port')):
                 ifname = '1.3.6.1.2.1.31.1.1.1.1.' + str(interface[0][1])
-                print ifname
                 name = provider.snmp_get(ifname)
 
             if name == ():

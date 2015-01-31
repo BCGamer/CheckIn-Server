@@ -47,7 +47,8 @@ INSTALLED_APPS = (
     'network.providers.hp.procurve_2650',
     'network.providers.hp.procurve_2524',
     'network.providers.hp.procurve_2626',
-    'network.providers.cisco',
+    #'network.providers.cisco',
+    'network.providers.cisco.catalyst_2950',
     'network.providers.mikrotik',
 
     'network',

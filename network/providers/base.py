@@ -4,6 +4,7 @@ import time
 from paramiko import SSHClient
 from pysnmp.entity.rfc3413.oneliner import cmdgen
 from network.exceptions import SwitchNotConnected, Timeout
+from netaddr import *
 
 
 class BaseSwitchBackend(object):
@@ -22,14 +23,8 @@ class BaseSwitchBackend(object):
             switch.snmp_username,
             switch.snmp_auth_pass,
             switch.snmp_priv_pass,
-
             authProtocol=tuple(map(int, switch.snmp_auth_type.split(','))),
             privProtocol=tuple(map(int, switch.snmp_priv_type.split(',')))
-
-            # authProtocol=(1,3,6,1,6,3,10,1,1,3),
-            # privProtocol=(1,3,6,1,6,3,10,1,2,2)
-            # authProtocol=cmdgen.usmHMACSHAAuthProtocol,
-            # privProtocol=cmdgen.usmAesCfb128Protocol
         )
 
         self._snmp_target = cmdgen.UdpTransportTarget(
@@ -106,6 +101,7 @@ class BaseSwitchBackend(object):
         self._shell = self._client.invoke_shell()
 
     def find_mac_address(self, ip):
+        # Different based on make (and model)
         raise NotImplementedError()
 
     def change_vlan(self, mac_address, vlan_id):
@@ -169,3 +165,54 @@ class BaseSwitchBackend(object):
         interactive.interactive_shell(chan)
         chan.close()
     '''
+
+    def snmp_findmac(self, mac):
+        matched_macs = ()
+        # provider = self.get_provider()
+        # provider.snmp_device(self)
+        dot1dtpfdbaddress = '1.3.6.1.2.1.17.4.3.1.1'
+        device_macs = self.snmp_walk(dot1dtpfdbaddress)
+        #print device_macs
+        for val in device_macs:
+            # Convert pysnmp crap returns to proper strings
+            val_oid = str(val[0])
+            val_mac = str(val[1].prettyPrint())[2:]
+
+            # Does this mac address match the one we're looking for?
+            if EUI(val_mac, dialect=mac_cisco) == EUI(mac, dialect=mac_cisco):
+                matched_macs += (val_oid.replace('1.3.6.1.2.1.17.4.3.1.1.', ''), )
+
+        if matched_macs == ():
+            # Nothing found
+            return
+
+        # We found match(es), find bridge port(s)
+        # This can have multiple results, loop through them
+        for oid in matched_macs:
+            dot1dtpfdbport = '1.3.6.1.2.1.17.4.3.1.2.' + str(oid)
+            bridge = self.snmp_get(dot1dtpfdbport)
+
+            if bridge == ():
+                break
+
+            # We found a bridge, find interface index - 1 result
+            ifindex = '1.3.6.1.2.1.2.2.1.1.' + str(bridge[0][1])
+            interface = self.snmp_get(ifindex)
+
+            if interface == ():
+                break
+
+            # We found an interface, find if valid - 1 result
+            # If valid, find interface name
+            if interface[0][1] < self.switch.ports and interface[0][1] not in (self.switch.uplink_ports.values_list('port')):
+                ifname = '1.3.6.1.2.1.31.1.1.1.1.' + str(interface[0][1])
+                name = self.snmp_get(ifname)
+
+            if name == ():
+                break
+
+            # We found the interface name, return it
+            return name[0][1]
+
+        # Somehow we got here, return nothing
+        return

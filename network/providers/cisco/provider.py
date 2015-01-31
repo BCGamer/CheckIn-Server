@@ -42,4 +42,4 @@ class CiscoSwitchBackend(BaseSwitchBackend):
         raise NotImplementedError()
 '''
 
-registry.register(CiscoSwitchBackend)
+#registry.register(CiscoSwitchBackend)

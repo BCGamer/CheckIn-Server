@@ -85,7 +85,6 @@ class Switch(models.Model):
     snmp_priv_pass = models.CharField(max_length=50, verbose_name='Privacy Password', blank='true', null='true')
     snmp_community = models.CharField(max_length=50, verbose_name='Community', blank='true', null='true')
     snmp_username = models.CharField(max_length=50, verbose_name='Username', blank='true', null='true')
-
     snmp_auth_type = models.CharField(max_length=50, verbose_name='Authentication Type', choices=TYPES_OF_SNMP_AUTHENTICATION, default=SNMP_AUTH_NONE)
     snmp_priv_type = models.CharField(max_length=50, verbose_name='Privacy Type', choices=TYPES_OF_SNMP_PRIVACY, default=SNMP_PRIV_NONE)
     snmp_security = models.CharField(max_length=50, verbose_name='Security Type', choices=TYPES_OF_SNMP_SECURITY, default=SNMP_SEC_NONE)
@@ -127,51 +126,7 @@ class Switch(models.Model):
         matched_macs = ()
         provider = self.get_provider()
         provider.snmp_device(self)
-        dot1dtpfdbaddress = '1.3.6.1.2.1.17.4.3.1.1'
-        device_macs = provider.snmp_walk(dot1dtpfdbaddress)
-        for val in device_macs:
-            # Convert pysnmp crap returns to proper strings
-            val_oid = str(val[0])
-            val_mac = str(val[1].prettyPrint())[2:]
-
-            # Does this mac address match the one we're looking for?
-            if EUI(val_mac, dialect=mac_cisco) == EUI(mac, dialect=mac_cisco):
-                matched_macs += (val_oid.replace('1.3.6.1.2.1.17.4.3.1.1.', ''), )
-
-        if matched_macs == ():
-            # Nothing found
-            return
-
-        # We found match(es), find bridge port(s)
-        # This can have multiple results, loop through them
-        for oid in matched_macs:
-            dot1dtpfdbport = '1.3.6.1.2.1.17.4.3.1.2.' + str(oid)
-            bridge = provider.snmp_get(dot1dtpfdbport)
-
-            if bridge == ():
-                break
-
-            # We found a bridge, find interface index - 1 result
-            ifindex = '1.3.6.1.2.1.2.2.1.1.' + str(bridge[0][1])
-            interface = provider.snmp_get(ifindex)
-
-            if interface == ():
-                break
-
-            # We found an interface, find if valid - 1 result
-            # If valid, find interface name
-            if interface[0][1] < self.ports and interface[0][1] not in (self.uplink_ports.values_list('port')):
-                ifname = '1.3.6.1.2.1.31.1.1.1.1.' + str(interface[0][1])
-                name = provider.snmp_get(ifname)
-
-            if name == ():
-                break
-
-            # We found the interface name, return it
-            return name[0][1]
-
-        # Somehow we got here, return nothing
-        return
+        return provider.snmp_findmac(mac)
 
     def connect(self):
         provider = self.get_provider()

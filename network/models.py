@@ -1,6 +1,7 @@
 from django.db import models
 from network.exceptions import MacNotFound
 from network.providers import registry
+from netaddr import *
 
 
 class SwitchManager(models.Manager):
@@ -37,9 +38,9 @@ class UplinkPort(models.Model):
 class Switch(models.Model):
 
     # Types of SNMP Authentication
-    SNMP_AUTH_NONE = 'usmNoAuthProtocol'
-    SNMP_AUTH_MD5 = 'usmHMACMD5AuthProtocol'
-    SNMP_AUTH_SHA = 'usmHMACSHAAuthProtocol'
+    SNMP_AUTH_NONE = 'usmNoAuthProtocol'        # usmNoAuthProtocol
+    SNMP_AUTH_MD5 = 'usmHMACMD5AuthProtocol'    # usmHMACMD5AuthProtocol
+    SNMP_AUTH_SHA = 'usmHMACSHAAuthProtocol'    # usmHMACSHAAuthProtocol
     TYPES_OF_SNMP_AUTHENTICATION = (
         (SNMP_AUTH_MD5, 'MD5'),
         (SNMP_AUTH_SHA, 'SHA'),
@@ -47,12 +48,12 @@ class Switch(models.Model):
     )
 
     # Types of SNMP Privacy
-    SNMP_PRIV_DES = 'usmDESPrivProtocol'
-    SNMP_PRIV_AES128 = 'usmAesCfb128Protocol'
-    SNMP_PRIV_3DES = 'usm3DESEDEPrivProtocol'
-    SNMP_PRIV_AES192 = 'usmAesCfb192Protocol'
-    SNMP_PRIV_AES256 = 'usmAesCfb256Protocol'
-    SNMP_PRIV_NONE = 'usmAesCfb256Protocol'
+    SNMP_PRIV_DES = 'usmDESPrivProtocol'        # usmDESPrivProtocol
+    SNMP_PRIV_AES128 = 'usmAesCfb128Protocol'   # usmAesCfb128Protocol
+    SNMP_PRIV_3DES = 'usm3DESEDEPrivProtocol'   # usm3DESEDEPrivProtocol
+    SNMP_PRIV_AES192 = 'usmAesCfb192Protocol'   # usmAesCfb192Protocol
+    SNMP_PRIV_AES256 = 'usmAesCfb256Protocol'   # usmAesCfb256Protocol
+    SNMP_PRIV_NONE = 'usmAesCfb256Protocol'     # usmAesCfb256Protocol
     TYPES_OF_SNMP_PRIVACY = (
         (SNMP_PRIV_NONE, 'NONE'),
         (SNMP_PRIV_DES, 'DES'),
@@ -123,31 +124,79 @@ class Switch(models.Model):
         return self._provider_cache
 
     def snmp_findmac(self, mac):
+        matched_macs = ()
         provider = self.get_provider()
         provider.snmp_device(self)
-        provider.snmp_get('1.3.6.1.2.1.17.4.3.1.2.0.31.22.28.76.134')
+        dot1dtpfdbaddress = '1.3.6.1.2.1.17.4.3.1.1'
+        print dot1dtpfdbaddress
+        device_macs = provider.snmp_walk(dot1dtpfdbaddress)
+        for val in device_macs:
+            # Convert pysnmp crap returns to proper strings
+            val_oid = str(val[0])
+            val_mac = str(val[1].prettyPrint())[2:]
 
-        # return
+            # Does this mac address match the one we're looking for?
+            if EUI(val_mac, dialect=mac_cisco) == EUI(mac, dialect=mac_cisco):
+                matched_macs += (val_oid.replace('1.3.6.1.2.1.17.4.3.1.1.', ''), )
+
+        if matched_macs == ():
+            # Nothing found
+            return
+
+        # We found match(es), find bridge port(s)
+        # This can have multiple results, loop through them
+        for oid in matched_macs:
+            dot1dtpfdbport = '1.3.6.1.2.1.17.4.3.1.2.' + str(oid)
+            print dot1dtpfdbport
+            bridge = provider.snmp_get(dot1dtpfdbport)
+
+            if bridge == ():
+                break
+
+            # We found a bridge, find interface index - 1 result
+            ifindex = '1.3.6.1.2.1.2.2.1.1.' + str(bridge[0][1])
+            print ifindex
+            interface = provider.snmp_get(ifindex)
+
+            if interface == ():
+                break
+
+            # We found an interface, find if valid - 1 result
+            # If valid, find interface name
+            if interface[0][1] < self.ports and interface[0][1] not in (self.uplink_ports.values_list('port')):
+                ifname = '1.3.6.1.2.1.31.1.1.1.1.' + str(interface[0][1])
+                print ifname
+                name = provider.snmp_get(ifname)
+
+            if name == ():
+                break
+
+            # We found the interface name, return it
+            return name[0][1]
+
+        # Somehow we got here, return nothing
+        return
 
     def connect(self):
         provider = self.get_provider()
         provider.connect(self)
-    '''
-    def get_shell(self):
-        provider = self.get_provider()
-        provider.get_interactive_shell()
-    '''
+
     def get_shell(self):
         provider = self.get_provider()
         provider.invoke_shell()
         # Clean the initial data buffer
         provider.receive_data()
 
-    def run_cmd(self, cmd):
+    def run_cmd(self, cmd, response=True):
         provider = self.get_provider()
         provider.run_command(cmd)
-        output = provider.receive_data()
-        return output
+        if response:
+            # Wait for SSH buffer to return data
+            output = provider.receive_data()
+            return output
+        else:
+            # Don't wait for SSH buffer to return data
+            return None
 
     def set_vlan(self, vlan_number):
         pass
@@ -179,14 +228,6 @@ class Switch(models.Model):
         finally:
             self.disconnect()
 
-    '''
-    def get_channel(self):
-        self.connect()
-        provider = self.get_provider()
-        chan = provider.invoke_shell()
-
-        return chan
-    '''
     def disconnect(self):
         provider = self.get_provider()
         provider.disconnect()

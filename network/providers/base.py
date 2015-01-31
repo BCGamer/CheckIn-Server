@@ -22,40 +22,50 @@ class BaseSwitchBackend(object):
             switch.snmp_username,
             switch.snmp_auth_pass,
             switch.snmp_priv_pass,
-            # need to change these two lines to actually use
-            # switch.snmp_auth_type
-            # switch.snmp_priv_type
-            # after fixing the database table to contain the proper string
+
             authProtocol=cmdgen.usmHMACSHAAuthProtocol,
-            privProtocol=cmdgen.usmAesCfb128Protocol)
+            privProtocol=cmdgen.usmAesCfb128Protocol
+            # need to change these two lines to actually use
+            # authProtocol=switch.snmp_auth_type,
+            # privProtocol=switch.snmp_priv_type
+            # after fixing the database table to contain the proper string
+        )
 
         self._snmp_target = cmdgen.UdpTransportTarget(
             (switch.ip, switch.snmp_port)
         )
 
     def snmp_walk(self, oid):
-        # NOTE TO MYSELF -
-        # finish snmp_walk method
-        # add a static method that can be used
-        # by both walk/get to go through output
-
-        '''
-        errorIndication, errorStatus, errorIndex, varBinds = self._snmp.nextCmd(
+        error_indication, error_status, error_index, var_binds = self._snmp.nextCmd(
             self._snmp_user, self._snmp_target,
             oid,
             lookupNames=True, lookupValues=True
         )
-        '''
-        raise NotImplementedError()
+
+        output = ()
+        if error_indication:
+            print(error_indication)
+        else:
+            if error_status:
+                print '%s at %s' % (
+                    error_status, error_index
+                )
+            else:
+                for row in var_binds:
+                    for name, val in row:
+                        output += ((name, val), )
+
+        return output
 
     def snmp_get(self, oid):
-        matches = ()
+        # output = ()
         error_indication, error_status, error_index, var_binds = self._snmp.getCmd(
             self._snmp_user, self._snmp_target,
             oid,
             lookupNames=True, lookupValues=True
         )
 
+        output = ()
         if error_indication:
             print(error_indication)
         else:
@@ -65,9 +75,9 @@ class BaseSwitchBackend(object):
                 )
             else:
                 for name, val in var_binds:
-                    matches += ((name, val), )
+                    output += ((name, val), )
 
-        return matches
+        return output
 
     def connect(self, switch):
         self.switch = switch

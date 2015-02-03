@@ -45,7 +45,7 @@ INSTALLED_APPS = (
     'registration',
     #'network.providers.hp',
     'network.providers.hp.procurve_2650',
-    'network.providers.hp.procurve_2524',
+    #'network.providers.hp.procurve_2524',
     'network.providers.hp.procurve_2626',
     #'network.providers.cisco',
     'network.providers.cisco.catalyst_2950',

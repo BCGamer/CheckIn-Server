@@ -10,20 +10,20 @@ class HPSwitchBackend(BaseSwitchBackend):
     id = 'HPSwitch'
     name = 'HP Switch'
 
-    def invoke_shell(self):
+    def ssh_invoke_shell(self):
         # return self._client.invoke_shell()
         self._shell = self._client.invoke_shell()
         # HP has a mandatory welcome screen that must be bypassed
-        self.receive_data()
+        self.ssh_receive_data()
         self._shell.send("\n")
-        self.receive_data()
+        self.ssh_receive_data()
 
-    def find_mac_address(self, mac):
+    def ssh_find_port(self, mac):
         # Format as 00:00:00:00:00:00
         mac = EUI(mac, dialect=mac_cisco)
 
-        self.run_command("show mac %s" % mac)
-        output = self.receive_data()
+        self.ssh_run_command("show mac %s" % mac)
+        output = self.ssh_receive_data()
         output = self.remove_garbage(output)
         port = re.findall(r'Located on Port : (\d+)', output)
 
@@ -37,18 +37,18 @@ class HPSwitchBackend(BaseSwitchBackend):
             # There is a problem
             raise MacNotFound()
 
-    def change_vlan(self, port, vlan):
-        self.run_command("configure")
-        self.receive_data()
-        self.run_command("vlan %s untagged %s" % (vlan, port))
-        self.receive_data()
-        self.run_command("interface %s" % port)
-        self.receive_data()
-        self.run_command("disable")
-        self.receive_data()
+    def ssh_change_vlan(self, port, vlan):
+        self.ssh_run_command("configure")
+        self.ssh_receive_data()
+        self.ssh_run_command("vlan %s untagged %s" % (vlan, port))
+        self.ssh_receive_data()
+        self.ssh_run_command("interface %s" % port)
+        self.ssh_receive_data()
+        self.ssh_run_command("disable")
+        self.ssh_receive_data()
         time.sleep(1)
-        self.run_command("enable")
-        self.receive_data()
+        self.ssh_run_command("enable")
+        self.ssh_receive_data()
 
 
     def show_port(self, mac_address):

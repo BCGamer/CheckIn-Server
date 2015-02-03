@@ -11,12 +11,12 @@ class CiscoSwitchBackend(BaseSwitchBackend):
     id = 'CiscoSwitch'
     name = 'Cisco Switch'
 
-    def find_mac_address(self, mac):
+    def ssh_find_port(self, mac):
         # Format as 00:00:00:00:00:00
         mac = EUI(mac, dialect=mac_unix)
 
-        self.run_command("show mac-address-table address %s" % mac)
-        output = self.receive_data()
+        self.ssh_run_command("show mac-address-table address %s" % mac)
+        output = self.ssh_receive_data()
         port = re.findall(r'Fa0/\d+', output)
 
         if len(port) == 1:
@@ -25,21 +25,13 @@ class CiscoSwitchBackend(BaseSwitchBackend):
             # There is a problem
             raise MacNotFound()
 
-    def change_vlan(self, port, vlan):
-        self.run_command("configure terminal")
-        self.run_command("interface %s" % port)
-        self.run_command("switchport access vlan %s" % vlan)
-        self.run_command("shutdown")
+    def ssh_change_vlan(self, port, vlan):
+        self.ssh_run_command("configure terminal")
+        self.ssh_run_command("interface %s" % port)
+        self.ssh_run_command("switchport access vlan %s" % vlan)
+        self.ssh_run_command("shutdown")
         time.sleep(1)
-        self.run_command("no shutdown")
-        self.receive_data()
-
-    def override_switch_vlan(self, ports, vlan):
-        raise NotImplementedError()
-
-'''
-    def show_port(self, mac_address):
-        raise NotImplementedError()
-'''
+        self.ssh_run_command("no shutdown")
+        self.ssh_receive_data()
 
 #registry.register(CiscoSwitchBackend)

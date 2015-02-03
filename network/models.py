@@ -13,6 +13,7 @@ class SwitchManager(models.Manager):
 
         for switch in enabled_switches:
             try:
+                print switch.name
                 switch.flip_vlan(mac, vlan_number)
             except MacNotFound, e:
                 continue
@@ -122,28 +123,29 @@ class Switch(models.Model):
             return registry.by_id(self.provider)
         return self._provider_cache
 
-    def snmp_findmac(self, mac):
-        matched_macs = ()
+    '''
+    def snmp_find_port(self, mac):
         provider = self.get_provider()
         provider.snmp_device(self)
-        return provider.snmp_findmac(mac)
+        return provider.snmp_find_port(mac)
+    '''
 
     def connect(self):
         provider = self.get_provider()
-        provider.connect(self)
+        provider.ssh_connect(self)
 
     def get_shell(self):
         provider = self.get_provider()
-        provider.invoke_shell()
+        provider.ssh_invoke_shell()
         # Clean the initial data buffer
-        provider.receive_data()
+        provider.ssh_receive_data()
 
     def run_cmd(self, cmd, response=True):
         provider = self.get_provider()
-        provider.run_command(cmd)
+        provider.ssh_run_command(cmd)
         if response:
             # Wait for SSH buffer to return data
-            output = provider.receive_data()
+            output = provider.ssh_receive_data()
             return output
         else:
             # Don't wait for SSH buffer to return data
@@ -160,28 +162,37 @@ class Switch(models.Model):
         if not vlan_number:
             vlan_number = self.switch_vlan_clean.num
 
-        self.connect()
+        provider = self.get_provider()
+        provider.snmp_device(self)
 
         try:
 
+            # port = self.snmp_find_port(mac)
+            port = provider.snmp_find_port(mac)
+            # port = self.get_provider().ssh_find_port(mac)
+            self.connect()
             self.get_shell()
-
-            port = self.get_provider().find_mac_address(mac)
-            self.get_provider().change_vlan(port, vlan_number)
+            provider.ssh_change_vlan(port, vlan_number)
+            #self.get_provider().ssh_change_vlan(port, vlan_number)
 
         except MacNotFound, e:
             self.disconnect()
             raise MacNotFound()
 
         except Exception, e:
+            print e
             pass
 
         finally:
+            # Squelch the stupid SNMP cmd generator
+            # If this isn't done 1 error is generated for
+            # each switch object
+            provider._snmp = None
             self.disconnect()
 
     def disconnect(self):
         provider = self.get_provider()
-        provider.disconnect()
+        provider.ssh_disconnect()
 
 
 class Vlan(models.Model):

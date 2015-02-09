@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
 from django.contrib import messages
+from django.views.generic import TemplateView
 
 from registration.models import RegisteredUser
 from unix_mac import get_mac_address
@@ -43,7 +44,7 @@ def login_user(request):
             login(request, user)
             return redirect('waiver')
 
-    return render(request, 'registration/login.html', {'form': form})
+    return render(request, 'registration/login.html', {'form': form, 'override_form': OverrideVerificationForm()})
 
 
 def logout_user(request):
@@ -76,9 +77,9 @@ def register(request):
             return redirect('waiver')
 
         else:
-            return render(request, 'registration/register.html', {'form': form})
+            return render(request, 'registration/register.html', {'form': form, 'override_form': OverrideVerificationForm() })
 
-    return render(request, 'registration/register.html', {'form': form})
+    return render(request, 'registration/register.html', {'form': form, 'override_form': OverrideVerificationForm() })
 
 
 @login_required
@@ -125,7 +126,6 @@ def verify(request):
 
 
 
-@login_required
 @require_POST
 def override_verification(request):
 
@@ -137,16 +137,34 @@ def override_verification(request):
 
         if Switch.objects.flip_vlan(mac, vlan.num):
             # Successfully switched vlan for mac, redirect to success page
-            return redirect('verified')
+            if request.path == reverse('register_override') or request.path == reverse('login_override'):
+                return redirect('override_complete')
+            else:  # path == '/verification/override/'
+                return redirect('verified')
         else:
             # Could not find mac or something went wrong - redirect to verify page with error
-            messages.error(request, 'big bada boom')
+            messages.error(request, 'Could not find mac or something went wrong')
 
     else:
         for field, error in form.errors.items():
-            messages.error(request, '%s: %s' % (field.title(), error[0]))
+            messages.error(request, '%s: %s' % (field.replace('_', ' ').title(), error[0]))
 
-    return redirect(reverse('verify'))
+    if request.path == reverse('override_verification'):
+        return redirect('verify')
+
+    elif request.path == reverse('login_override'):
+        return redirect('login')
+
+    else:  # request.path == '/override/':
+        return redirect('register')
+
+
+
+class OverrideCompleteTemplateView(TemplateView):
+    template_name = 'registration/override_complete.html'
+
+override_complete = OverrideCompleteTemplateView.as_view()
+
 
 
 @login_required

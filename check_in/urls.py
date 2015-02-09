@@ -8,10 +8,13 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^login/$', 'registration.views.login_user', name='login'),
+    url(r'^login/override/$', 'registration.views.override_verification', name='login_override'),
 
     url(r'^logout/$', 'registration.views.logout_user', name='logout'),
 
     url(r'^$', 'registration.views.register', name='register'),
+    url(r'^override/$', 'registration.views.override_verification', name='register_override'),
+    url(r'^override/complete/$', 'registration.views.override_complete', name='override_complete'),
 
     url(r'^waiver/$', 'registration.views.waiver', name='waiver'),
 

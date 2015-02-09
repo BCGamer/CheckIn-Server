@@ -27,10 +27,35 @@
                     <div class="form-group">
 
                         <button type="submit" class="btn btn-primary">Login</button>
+                        <button class="btn btn-link pull-right" type="button" data-toggle="modal" data-target="#overrideModal">Override</button>
                     </div>
 
                 </form>
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="overrideModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Override</h4>
+          </div>
+          <div class="modal-body">
+            <form method="post" action="{% url 'login_override' %}">
+                {% csrf_token %}
+                {{ override_form|as_bootstrap }}
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                    <div class="clearfix"></div>
+                </div>
+
+            </form>
+          </div>
+
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 {% endblock body %}

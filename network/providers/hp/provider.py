@@ -37,7 +37,7 @@ class HPSwitchBackend(BaseSwitchBackend):
             # There is a problem
             raise MacNotFound()
 
-    def ssh_change_vlan(self, port, vlan):
+    def ssh_change_port_vlan(self, port, vlan):
         self.ssh_run_command("configure")
         self.ssh_receive_data()
         self.ssh_run_command("vlan %s untagged %s" % (vlan, port))
@@ -50,6 +50,11 @@ class HPSwitchBackend(BaseSwitchBackend):
         self.ssh_run_command("enable")
         self.ssh_receive_data()
 
+    def ssh_change_portrange_vlan(self, min_port, max_port, vlan):
+        self.ssh_run_command("configure")
+        self.ssh_receive_data()
+        self.ssh_run_command("vlan %s untagged %s-%s" % (vlan, min_port, max_port))
+        self.ssh_receive_data()
 
     def show_port(self, mac_address):
         raise NotImplementedError()

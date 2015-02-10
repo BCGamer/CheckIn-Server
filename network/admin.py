@@ -58,7 +58,6 @@ class SwitchAdmin(admin.ModelAdmin):
 
     def override_switch_vlan(self, request, queryset):
 
-
         form = None
 
         if 'apply' in request.POST:
@@ -68,7 +67,7 @@ class SwitchAdmin(admin.ModelAdmin):
                 vlan = form.cleaned_data['vlan']
 
                 for switch in queryset:
-                    switch.change_vlan(vlan.num)
+                    switch.flip_switch_vlan(vlan.num)
 
                 self.message_user(request, 'Successfully changed switch VLan.')
 

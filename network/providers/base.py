@@ -7,7 +7,7 @@ from netaddr import *
 
 from network.exceptions import SwitchNotConnected
 from network.exceptions import MacNotFound
-from network.exceptions import Timeout
+from network.exceptions import PortNotFound
 
 
 class BaseSwitchBackend(object):
@@ -81,6 +81,27 @@ class BaseSwitchBackend(object):
                     output += ((name, val), )
 
         return output
+
+    def snmp_find_portname(self, port):
+        ifindex = '1.3.6.1.2.1.2.2.1.1.' + str(port)
+        interface = self.snmp_get(ifindex)
+
+        if interface == ():
+            raise PortNotFound()
+
+        # We found an interface, find if valid - 1 result
+        # If valid, find interface name
+        # Pre-set 'name' in case we need it to fail properly
+        name = ()
+        if interface[0][1] < self.switch.ports and interface[0][1] not in (self.switch.uplink_ports.values_list('port')):
+            ifname = '1.3.6.1.2.1.31.1.1.1.1.' + str(interface[0][1])
+            name = self.snmp_get(ifname)
+
+        if name == ():
+            raise PortNotFound()
+
+        # We found the interface name, return it
+        return name[0][1]
 
     def snmp_find_port(self, mac):
         matched_macs = ()
@@ -162,7 +183,10 @@ class BaseSwitchBackend(object):
         # Different based on make (and model)
         raise NotImplementedError()
 
-    def ssh_change_vlan(self, mac_address, vlan_id):
+    def ssh_change_port_vlan(self, port, vlan_id):
+        raise NotImplementedError()
+
+    def ssh_change_portrange_vlan(self, min_port, max_port, vlan_id):
         raise NotImplementedError()
 
     def ssh_run_command(self, command):
@@ -178,30 +202,6 @@ class BaseSwitchBackend(object):
         more_data = True
 
         while more_data is True:
-            '''
-            timer_check = 0
-            # Wait for the data to arrive
-            while not self._shell.recv_ready():
-                # Sleep for 50 milliseconds
-                time.sleep(0.050)
-                timer_check += 1
-                # Wait for a maximum of 2 seconds
-                if timer_check >= 40:
-                    raise Timeout("Data buffer timed out")
-
-            # Wait for client to finish with data (IMPORTANT!)
-            time.sleep(0.050)
-
-            output = output + self._shell.recv(1024)
-
-
-            # Check 5 times to make sure there's no more data
-            # Continue looping if there is more data to receive
-            for _ in range(5):
-                time.sleep(0.050)
-                if not self._shell.recv_ready():
-                    more_data = False
-            '''
             for _ in range(40):
                 time.sleep(0.050)
                 if self._shell.recv_ready():

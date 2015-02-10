@@ -25,9 +25,20 @@ class CiscoSwitchBackend(BaseSwitchBackend):
             # There is a problem
             raise MacNotFound()
 
-    def ssh_change_vlan(self, port, vlan):
+    def ssh_change_port_vlan(self, port, vlan):
+        # Confirm port is presented correctly
+        # Lookup correct name
+        portname = re.findall(r'\D+\d+\/\d+', port)
+
+        if not portname:
+            try:
+                portname = self.snmp_find_portname(port)
+            except Exception, e:
+                pass
+
+        # Change the port's VLAN
         self.ssh_run_command("configure terminal")
-        self.ssh_run_command("interface %s" % port)
+        self.ssh_run_command("interface %s" % portname)
         self.ssh_run_command("switchport access vlan %s" % vlan)
         self.ssh_run_command("shutdown")
         time.sleep(1)

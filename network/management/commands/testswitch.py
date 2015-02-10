@@ -33,7 +33,7 @@ class Command(BaseCommand):
 
         mac = '001f.161c.4c86'
         try:
-            switch.flip_vlan(mac)
+            switch.flip_mac_vlan(mac)
         except MacNotFound:
             self.stderr.write("Could not find mac: %s" % mac)
 

@@ -3,6 +3,8 @@ from network.exceptions import MacNotFound
 from network.providers import registry
 from netaddr import *
 
+from network.exceptions import TooManyUplinks
+
 
 class SwitchManager(models.Manager):
 
@@ -14,7 +16,7 @@ class SwitchManager(models.Manager):
         for switch in enabled_switches:
             try:
                 print switch.name
-                switch.flip_vlan(mac, vlan_number)
+                switch.flip_mac_vlan(mac, vlan_number)
             except MacNotFound, e:
                 continue
 
@@ -157,8 +159,7 @@ class Switch(models.Model):
     def set_port_vlan(self, vlan_number):
         ports = self.uplink_ports.values_list('port', flat=True)
 
-    def flip_vlan(self, mac, vlan_number=None):
-
+    def flip_mac_vlan(self, mac, vlan_number=None):
         if not vlan_number:
             vlan_number = self.switch_vlan_clean.num
 
@@ -166,14 +167,10 @@ class Switch(models.Model):
         provider.snmp_device(self)
 
         try:
-
-            # port = self.snmp_find_port(mac)
             port = provider.snmp_find_port(mac)
-            # port = self.get_provider().ssh_find_port(mac)
             self.connect()
             self.get_shell()
-            provider.ssh_change_vlan(port, vlan_number)
-            #self.get_provider().ssh_change_vlan(port, vlan_number)
+            provider.ssh_change_port_vlan(port, vlan_number)
 
         except MacNotFound, e:
             self.disconnect()
@@ -187,6 +184,69 @@ class Switch(models.Model):
             # Squelch the stupid SNMP cmd generator
             # If this isn't done 1 error is generated for
             # each switch object
+            provider._snmp = None
+            self.disconnect()
+
+    def flip_port_vlan(self, port, vlan_number=None):
+        if not vlan_number:
+            vlan_number = self.switch_vlan_clean.num
+
+        provider = self.get_provider()
+        provider.snmp_device(self)
+
+        try:
+            self.connect()
+            self.get_shell()
+            provider.ssh_change_port_vlan(port, vlan_number)
+
+        except Exception, e:
+            print e
+            pass
+
+        finally:
+            provider._snmp = None
+            self.disconnect()
+
+    def get_port_ranges(self):
+        uplink_ports = self.uplink_ports.values_list('port', flat=True)
+        ranges = []
+
+        if len(uplink_ports) > 2:
+            raise TooManyUplinks
+
+        if len(uplink_ports) == 1:
+            ranges.append(range(1, uplink_ports[0]))
+            ranges.append(range(uplink_ports[0]+1, self.ports+1))
+        elif len(uplink_ports) ==2:
+            ranges.append(range(1, min(uplink_ports)))
+            ranges.append(range(min(uplink_ports)+1, (max(uplink_ports))))
+            ranges.append(range(max(uplink_ports)+1, self.ports+1))
+
+        return ranges
+
+    def flip_switch_vlan(self, vlan_number=None):
+        if not vlan_number:
+            vlan_number = self.switch_vlan_clean.num
+
+        provider = self.get_provider()
+        provider.snmp_device(self)
+
+        ranges = self.get_port_ranges()
+
+        try:
+            self.connect()
+            self.get_shell()
+
+            for range in ranges:
+                if range:
+                    if len(range) > 1:
+                        provider.ssh_change_portrange_vlan(min(range), max(range), vlan_number)
+                    else:
+                        provider.ssh_change_port_vlan(str(range))
+        except Exception, e:
+            print e
+            pass
+        finally:
             provider._snmp = None
             self.disconnect()
 

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from network.forms import VlanForm
+from network.forms import VlanForm, SwitchPortForm
 from network.models import Switch, UplinkPort
 from network.models import Vlan
 from django import forms
@@ -57,7 +57,6 @@ class SwitchAdmin(admin.ModelAdmin):
     ]
 
     def override_switch_vlan(self, request, queryset):
-
         form = None
 
         if 'apply' in request.POST:
@@ -85,7 +84,31 @@ class SwitchAdmin(admin.ModelAdmin):
     override_switch_vlan.short_description = "Override switch VLan"
 
     def override_port_vlan(self, request, queryset):
-        pass
+        form = None
+
+        if 'apply' in request.POST:
+            form = SwitchPortForm(request.POST)
+
+            if form.is_valid():
+                vlan = form.cleaned_data['vlan']
+                port = form.cleaned_data['port']
+
+                for switch in queryset:
+                    switch.flip_port_vlan(port, vlan.num)
+
+                self.message_user(request, 'Successfully changed port VLan.')
+
+            return HttpResponseRedirect(request.get_full_path())
+
+        if not form:
+            form = SwitchPortForm(initial={'_selected_action': request.POST.getlist(admin.ACTION_CHECKBOX_NAME)})
+
+        context = {
+            'form': form,
+        }
+
+        return render(request, 'admin/network/switch/change_port_vlan.html', context)
+
     override_port_vlan.short_description = "Override port VLan"
 
 

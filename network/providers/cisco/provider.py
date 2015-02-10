@@ -45,4 +45,6 @@ class CiscoSwitchBackend(BaseSwitchBackend):
         self.ssh_run_command("no shutdown")
         self.ssh_receive_data()
 
+    def ssh_change_portrange_vlan(self, min_port, max_port, vlan):
+        raise NotImplementedError
 #registry.register(CiscoSwitchBackend)

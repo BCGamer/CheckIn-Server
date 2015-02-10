@@ -182,14 +182,10 @@ def verify_download(request):
         'registered_user': registered_user
     }
 
-    #t = loader.get_template('registration/../_media/binaries/hostname.ps1')
-    t = loader.get_template('static/binaries/hostname.ps1')
-    c = RequestContext(request, context)
+    with open('registration/assets/checkin.exe', 'rb') as checkin_exe:
 
-    powershell_script = t.render(c)
-
-    response = HttpResponse(powershell_script)
-    response['Content-Disposition'] = 'attachment; filename=assess-%s.ps1' % registered_user.uuid
+        response = HttpResponse(checkin_exe)
+        response['Content-Disposition'] = 'attachment; filename=assess-%s.exe' % registered_user.uuid
 
     return response
 

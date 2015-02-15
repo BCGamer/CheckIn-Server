@@ -38,7 +38,7 @@ class RegisteredUser(AbstractUser):
     time_in = models.DateTimeField(blank=True, null=True)
     time_out = models.DateTimeField(blank=True, null=True)
 
-    uuid = UUIDField( default=generate_uuid )
+    uuid = UUIDField(default=generate_uuid)
 
     def ready2lan(self):
         return all([self.has_firewall, self.has_antivirus, self.dhcp_enabled])

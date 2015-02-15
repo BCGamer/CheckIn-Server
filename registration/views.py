@@ -10,7 +10,6 @@ from django.template import loader, RequestContext
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-
 from django.contrib import messages
 from django.views.generic import TemplateView
 
@@ -35,7 +34,7 @@ def home(request):
 
 def login_user(request):
 
-   # form = AuthenticationForm(data=request.POST or None)
+    # form = AuthenticationForm(data=request.POST or None)
     form = LoginForm(data=request.POST or None)
 
     if request.method == 'POST':
@@ -110,8 +109,8 @@ def waiver(request):
 @login_required
 def verify(request):
 
-    if not request.META.get('REMOTE_ADDR').startswith(settings.DIRTY_SUBNETS):
-        return redirect('verified')
+    #if not request.META.get('REMOTE_ADDR').startswith(settings.DIRTY_SUBNETS):
+    #    return redirect('verified')
 
     registered_user = request.user
 
@@ -248,13 +247,14 @@ def verification_response(request):
 
 def get_uuid_for_ip(request):
 
-    log.info(request.META.get('REMOTE_ADDR'))
+    ipaddress = request.META.get('REMOTE_ADDR')
+    log.info(ipaddress)
 
-    registered_user = RegisteredUser.objects.get(ip_address=request.META.get('REMOTE_ADDR'))
+    registered_user = RegisteredUser.objects.get(ip_address=ipaddress)
 
     resp = {
         'uuid': registered_user.uuid,
-        'ip': request.META.get('REMOTE_ADDR'),
+        'ipaddress': ipaddress,
     }
 
     return HttpResponse(json.dumps(resp), content_type='application/json')

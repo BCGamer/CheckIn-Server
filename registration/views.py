@@ -169,6 +169,11 @@ override_complete = OverrideCompleteTemplateView.as_view()
 
 @login_required
 def verify_completed(request):
+    registered_user = request.user
+    # If we don't change the user's IP address after it
+    # gets reset we could end up with an IP conflict
+    # django -> c# app relies on this being relatively unique
+    registered_user.ip_address = request.META.get('REMOTE_ADDR')
 
     return render(request, 'registration/verification_complete.html')
 
@@ -198,9 +203,12 @@ def check_verification(request):
     response = {
         'verification_received': request.user.verification_received,
         'ready2lan': False,
-        'antivirus': False,
-        'firewall': False,
-        'dhcp': False,
+        #'antivirus': False,
+        'antivirus': request.user.has_antivirus,
+        #'firewall': False,
+        'firewall': request.user.has_firewall,
+        #'dhcp': False,
+        'dhcp': request.user.dhcp_enabled,
     }
 
     if request.user.verification_received:
@@ -239,14 +247,15 @@ def verification_response(request):
     user.verification_received = True
 
     if form_valid:
-        response = {'detail': 'Dobbo is good'}
+        response = {'detail': 'Good'}
     else:
         user.reg_errors = json.dumps(form.errors)
         response = form.errors
 
     user.save()
 
-    flip_users_vlan.delay(str(user.mac))
+    if user.ready2lan():
+        flip_users_vlan.delay(str(user.mac))
 
     return JsonResponse(response, status=200)
 

@@ -85,6 +85,7 @@ class VerificationResponseForm(forms.Form):
     dhcp = forms.ChoiceField(choices=DHCP_CHOICES)
     mac = forms.CharField(max_length=20)
 
+    # Start everything in worst case
     firewall_good = False
     antivirus_good = False
     dhcp_good = False

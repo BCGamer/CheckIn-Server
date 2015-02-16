@@ -7,9 +7,13 @@ $(function(){
         $resultsDiv = $("#results-div"),
         $firewall = $("#firewall-status"),
         $dhcp = $("#dhcp-status"),
-        $antivirus = $("#antivirus-status");
+        $antivirus = $("#antivirus-status"),
+        $connectingDiv = $("#connecting-div");
 
     var previousResult = {};
+    var connectingIID =  "";
+
+    var ready2lan = false
 
     $initialDownloadBtn.on("click", function(){
         $verificationDiv.slideUp(500, function(){
@@ -57,6 +61,10 @@ $(function(){
             }
         }
 
+        if((results.firewall)&&(results.dhcp)&&(results.antivirus)){
+            ready2lan = true
+        }
+
         showSettingStatus($firewall, firewallStatus, firewallMessage);
         showSettingStatus($antivirus, antivirusStatus, antivirusMessage);
         showSettingStatus($dhcp, dhcpStatus, dhcpMessage);
@@ -73,23 +81,42 @@ $(function(){
 
 
     function checkVerification(){
-
-        $.ajax({
-            url: '/verify/check/',
-            type: 'GET',
-            success: function(data){
-                if(data.verification_received){
-                    if(JSON.stringify(data) !== JSON.stringify(previousResult)){
-                        showVerificationResults(data);
+        if(ready2lan){
+            clearInterval(checkVerificationIID);
+            checkConnection();
+        }else{
+            $.ajax({
+                url: '/verify/check/',
+                type: 'GET',
+                success: function(data){
+                    if(data.verification_received){
+                        if(JSON.stringify(data) !== JSON.stringify(previousResult)){
+                            showVerificationResults(data);
+                        }
+                        previousResult = data;
                     }
-                    previousResult = data;
                 }
-            }
-        });
-
+            });
+        }
     }
 
-    setInterval(checkVerification, 5000);
+    function checkConnection(){
+        // Hide everything after 3 seconds
+        // Show spinner gif
+        setTimeout(function(){
+            $resultsDiv.hide(600);
+            $initialDownloadBtn.hide(600);
+            $verificationDiv.hide(600);
+            $connectingDiv.show(600);
+        }, 3000);
+
+
+        setTimeout(function() {
+            window.location.replace("http://checkin.bcgamer.lan/verified");
+        }, 15000);
+    }
+
+    var checkVerificationIID = setInterval(checkVerification, 1000);
 });
 
 

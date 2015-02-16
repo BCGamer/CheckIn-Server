@@ -51,6 +51,7 @@
                     <p>Please run the validation tool.</p>
                     <p>Once it has analyzed your computer it will display the results here.</p>
                     <p><a href="{% url 'verify_dl' %}">Retry Download</a> </p>
+                    <p><a href="{% url 'verify' %}">Back</a> </p>
                 </div>
             </div>
         </div>
@@ -66,6 +67,12 @@
                 <div class="alert" id="dhcp-status">
                     <strong>DHCP:</strong> <span class="message"> DHCP configuration error detected.</span>
                 </div>
+            </div>
+        </div>
+        <div class="row" style="display: none;" id="connecting-div">
+            <div class="col-sm-6 col-sm-offset-3" style="text-align: center">
+                <h4>Connecting...</h4>
+                <img src="../s/img/connecting.gif"/>
             </div>
         </div>
 

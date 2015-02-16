@@ -18,7 +18,7 @@ AUTH_USER_MODEL = 'registration.RegisteredUser'
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('CHECKIN_DJ_KEY')
+SECRET_KEY = '%s' % os.environ.get('CHECKIN_DJ_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -73,13 +73,20 @@ WSGI_APPLICATION = 'check_in.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
+DB_ENGINE = os.environ.get('CHECKIN_DB_TYPE')
+DB_NAME = os.environ.get('CHECKIN_DB_NAME')
+DB_HOST = os.environ.get('CHECKIN_DB_HOST')
+DB_USER = os.environ.get('CHECKIN_DB_USER')
+DB_PASS = os.environ.get('CHECKIN_DB_PASS')
+VERIFICATION_OVERRIDE_CODE = os.environ.get('CHECKIN_OVERRIDE_CODE')
+
 DATABASES = {
     'default': {
-        'ENGINE': os.environ.get('CHECKIN_DB_TYPE'),
-        'NAME': os.environ.get('CHECKIN_DB_NAME'),
-        'HOST': os.environ.get('CHECKIN_DB_HOST'),
-        'USER': os.environ.get('CHECKIN_DB_USER'),
-        'PASSWORD': os.environ.get('CHECKIN_DB_PASS')
+        'ENGINE': DB_ENGINE,
+        'NAME': DB_NAME,
+        'HOST': DB_HOST,
+        'USER': DB_USER,
+        'PASSWORD': DB_PASS
     }
 }
 

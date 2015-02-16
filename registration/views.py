@@ -159,12 +159,10 @@ def override_verification(request):
         return redirect('register')
 
 
-
 class OverrideCompleteTemplateView(TemplateView):
     template_name = 'registration/override_complete.html'
 
 override_complete = OverrideCompleteTemplateView.as_view()
-
 
 
 @login_required
@@ -273,3 +271,22 @@ def get_uuid_for_ip(request):
     }
 
     return HttpResponse(json.dumps(resp), content_type='application/json')
+
+
+@login_required
+def has_ip_changed(request):
+    ipaddress_browser = request.META.get('REMOTE_ADDR')
+    ipaddress_user = request.user.ip_address
+
+    if ipaddress_browser != ipaddress_user:
+        response = {
+            'ip_address_changed': True
+        }
+        request.user.ip_address = ipaddress_browser
+        request.user.save()
+    else:
+        response = {
+            'ip_address_changed': False
+        }
+
+    return HttpResponse(json.dumps(response), content_type='application/json')

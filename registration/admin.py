@@ -6,14 +6,16 @@ from django.contrib.auth.admin import UserAdmin
 
 class RegisteredUserAdmin(UserAdmin):
     list_display = ('username',
-                    'last_name',
-                    'first_name',
+                    #'last_name',
+                    #'first_name',
                     'ip_address',
+                    'mac',
                     'has_av',
                     'has_fw',
                     'has_dhcp',
                     'has_waiver',
-                    'gottacon_id')
+                    #'gottacon_id',
+    )
 
     list_filter = ('dhcp_enabled',
                    'has_firewall',

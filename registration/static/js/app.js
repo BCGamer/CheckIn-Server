@@ -14,6 +14,7 @@ $(function(){
     var connectingIID =  "";
 
     var ready2lan = false
+    var hasIPChangedIID
 
     $initialDownloadBtn.on("click", function(){
         $verificationDiv.slideUp(500, function(){
@@ -107,17 +108,34 @@ $(function(){
             $resultsDiv.hide(600);
             $initialDownloadBtn.hide(600);
             $verificationDiv.hide(600);
+            $pleaseWaitDiv.hide(600);
             $connectingDiv.show(600);
         }, 3000);
 
+        setInterval(hasIPChanged, 1000)
 
-        setTimeout(function() {
-            window.location.replace("http://checkin.bcgamer.lan/verified");
-        }, 15000);
+        //setTimeout(function() {
+        //    window.location.replace("http://checkin.bcgamer.lan/verified");
+        //}, 15000);
+    }
+
+    function hasIPChanged(){
+        $.ajax({
+                url: '/verify/checkip/',
+                type: 'GET',
+                success: function(data){
+                    // If there is a response
+                    if(data){
+                        // Check if browser and user match
+                        //if(data.browser != data.user){
+                        if(data.ip_address_changed){
+                            clearInterval(hasIPChangedIID);
+                            window.location.replace("http://checkin.bcgamer.lan/verified");
+                        }
+                    }
+                }
+            });
     }
 
     var checkVerificationIID = setInterval(checkVerification, 1000);
 });
-
-
-

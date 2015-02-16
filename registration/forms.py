@@ -3,8 +3,11 @@ from registration.models import RegisteredUser
 from django.contrib.auth.forms import AuthenticationForm
 from django.conf import settings
 
+from netaddr import *
+
 from macaddress.formfields import MACAddressField
 from network.models import Vlan
+
 
 
 class OverrideVerificationForm(forms.Form):
@@ -27,9 +30,10 @@ class RegistrationForm(forms.ModelForm):
 
     first_name = forms.CharField(required=True)
     last_name = forms.CharField(required=True)
-    gottacon_id = forms.CharField(required=True, label="Attendee ID")
+    gottacon_id = forms.CharField(required=True, label="GottaCon ID")
     nickname = forms.CharField(required=True, label="In Game Name / Handle")
-    email = forms.CharField(required=True)
+    # username = forms.CharField(required=True, label="Email")
+    email = forms.CharField(required=True, label="Email")
     password = forms.CharField(required=True, widget=forms.PasswordInput())
     password_2 = forms.CharField(required=True, label='Password Repeat', widget=forms.PasswordInput())
 
@@ -44,7 +48,6 @@ class RegistrationForm(forms.ModelForm):
         )
 
     def clean(self):
-
         cleaned_data = super(RegistrationForm, self).clean()
 
         password1 = cleaned_data.get('password')
@@ -80,10 +83,12 @@ class VerificationResponseForm(forms.Form):
     firewall = forms.CharField(max_length=6)
     antivirus = forms.CharField(max_length=6)
     dhcp = forms.ChoiceField(choices=DHCP_CHOICES)
+    mac = forms.CharField(max_length=20)
 
     firewall_good = False
     antivirus_good = False
     dhcp_good = False
+    mac_good = '00:00:00:00:00:00'
 
     def charint_to_hex(self, value):
         try:
@@ -109,6 +114,11 @@ class VerificationResponseForm(forms.Form):
             raise forms.ValidationError("DHCP configuration error was detected.")
 
         self.dhcp_good = True
+
+    def clean_mac(self):
+        mac = self.cleaned_data['mac']
+
+        self.mac_good = EUI(mac, dialect=mac_cisco)
 
     def clean_firewall(self):
         firewall = self.charint_to_hex(self.cleaned_data['firewall'])
@@ -139,6 +149,7 @@ class WaiverForm(forms.ModelForm):
             'guardian_name',
             'guardian_phone',
         )
+
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(label="Email", max_length=50)

@@ -89,8 +89,7 @@ $(function(){
 
     }
 
-    setInterval(checkVerification, 1000);
-
+    setInterval(checkVerification, 5000);
 });
 
 

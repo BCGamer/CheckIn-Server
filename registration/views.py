@@ -18,6 +18,7 @@ from unix_mac import get_mac_address
 from registration.forms import RegistrationForm, VerificationResponseForm, WaiverForm, LoginForm, \
     OverrideVerificationForm
 from network.models import Vlan, Switch
+from network.tasks import flip_users_vlan
 
 log = logging.getLogger(__name__)
 
@@ -109,8 +110,8 @@ def waiver(request):
 @login_required
 def verify(request):
 
-    #if not request.META.get('REMOTE_ADDR').startswith(settings.DIRTY_SUBNETS):
-    #    return redirect('verified')
+    if not request.META.get('REMOTE_ADDR').startswith(settings.DIRTY_SUBNETS):
+        return redirect('verified')
 
     registered_user = request.user
 
@@ -181,10 +182,12 @@ def verify_download(request):
         'registered_user': registered_user
     }
 
-    with open('registration/assets/checkin.exe', 'rb') as checkin_exe:
+    # Renaming this file will cause Windows Defender
+    # and browser security to freak out
+    with open('registration/assets/bcg_system_verification.exe', 'rb') as checkin_exe:
 
         response = HttpResponse(checkin_exe)
-        response['Content-Disposition'] = 'attachment; filename=assess-%s.exe' % registered_user.uuid
+        response['Content-Disposition'] = 'attachment; filename=bcg_system_verification.exe'
 
     return response
 
@@ -232,6 +235,7 @@ def verification_response(request):
     user.dhcp_enabled = form.dhcp_good
     user.has_antivirus = form.antivirus_good
     user.has_firewall = form.firewall_good
+    user.mac = form.mac_good
     user.verification_received = True
 
     if form_valid:
@@ -241,6 +245,8 @@ def verification_response(request):
         response = form.errors
 
     user.save()
+
+    flip_users_vlan.delay(str(user.mac))
 
     return JsonResponse(response, status=200)
 

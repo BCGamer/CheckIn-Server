@@ -18,14 +18,14 @@ AUTH_USER_MODEL = 'registration.RegisteredUser'
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'nuuj*6xly9i@eia==^fyi4k3xn%0gcc-$s&vhahyv**6sb%t#g'
+SECRET_KEY = os.environ.get('CHECKIN_DJ_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -62,6 +62,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'check_in.middleware.RemoteAddrMiddleware',
 )
 
 ROOT_URLCONF = 'check_in.urls'
@@ -74,11 +75,11 @@ WSGI_APPLICATION = 'check_in.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'checkin',
-        'HOST': '127.0.0.1',
-        'USER': 'checkin',
-        'PASSWORD': 'checkin'
+        'ENGINE': os.environ.get('CHECKIN_DB_TYPE'),
+        'NAME': os.environ.get('CHECKIN_DB_NAME'),
+        'HOST': os.environ.get('CHECKIN_DB_HOST'),
+        'USER': os.environ.get('CHECKIN_DB_USER'),
+        'PASSWORD': os.environ.get('CHECKIN_DB_PASS')
     }
 }
 
@@ -96,23 +97,9 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/s/'
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = '/webapps/django_checkin/static/'
 
 TEMPLATE_URL = '/t/'
-#TEMPLATE_DIRS = (
-#    os.path.join(BASE_DIR, "_templates"),
-#)
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.7/howto/static-files/
-
-
-#STATICFILES_DIRS = (
-#    os.path.join(BASE_DIR, "_static"),
-#)
-
-#print os.path.join(BASE_DIR, "_static")
-
 
 LOGGING = {
     'version': 1,
@@ -149,8 +136,6 @@ CELERY_TASK_SERIALIZER = "json"
 
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
-
-VERIFICATION_OVERRIDE_CODE = 'BCGamer12'
-
+VERIFICATION_OVERRIDE_CODE = os.environ.get('CHECKIN_OVERRIDE_CODE')
 
 DIRTY_SUBNETS = '10.5.50'

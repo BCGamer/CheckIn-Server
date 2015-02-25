@@ -11,9 +11,31 @@
             <div class="col-sm-8 col-sm-offset-2">
                 <h4>Welcome to GottaCon, {{ registered_user.first_name }}</h4>
 
-                <p>
+                <div style="margin-top: 10px; margin-bottom: 20px;">
+                    <p>
+                        You are now connected to the network. <br />
+                    </p>
 
-                </p>
+                    <p>
+                        The following servers are available locally for your usage.
+                        <ul>
+                            <li>
+                                Teamspeak 3 - <a href="ts3server://ts3.bcgamer.lan?nickname={{ registered_user.nickname }}&addbookmark=1">Server</a> -
+                                <a href="http://local-dl.bcgamer.lan/TeamSpeak3-Client-win64-3.0.16.exe">Download Client</a>
+                            </li>
+                        </ul>
+                        <!--
+                        This will screen your computer for the following requirements:
+                        <ul>
+                            <li>Antivirus Installed</li>
+                            <li>Firewall Enabled</li>
+                            <li>File and Printer Sharing Disabled</li>
+                            <li>DHCP Enabled</li>
+                        </ul>
+                        -->
+                    </p>
+                </div>
+
             </div>
 
         </div>

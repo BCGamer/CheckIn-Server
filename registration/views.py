@@ -168,12 +168,15 @@ override_complete = OverrideCompleteTemplateView.as_view()
 @login_required
 def verify_completed(request):
     registered_user = request.user
+    context = {
+        'registered_user': registered_user
+    }
     # If we don't change the user's IP address after it
     # gets reset we could end up with an IP conflict
     # django -> c# app relies on this being relatively unique
     registered_user.ip_address = request.META.get('REMOTE_ADDR')
 
-    return render(request, 'registration/verification_complete.html')
+    return render(request, 'registration/verification_complete.html', context)
 
 
 @login_required

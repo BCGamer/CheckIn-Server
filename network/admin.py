@@ -28,7 +28,7 @@ class SwitchAdmin(admin.ModelAdmin):
                     'provider', 'ip', 'ssh_port',
                     'switch_vlan_dirty', 'switch_vlan_clean',
                     'enabled',
-                    'ports', 'id')
+                    'ports', 'snmp_auth_type', 'snmp_priv_type')
     ordering = ('ip',)
 
     inlines = (
@@ -36,6 +36,10 @@ class SwitchAdmin(admin.ModelAdmin):
     )
 
     form = SwitchForm
+
+    search_fields = ('name', 'ip', )
+
+    list_filter = ('enabled', )
 
     fieldsets = (
         (None, {'fields': (('name', 'ip', 'ports', ),

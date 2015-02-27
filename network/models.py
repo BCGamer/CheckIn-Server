@@ -220,7 +220,9 @@ class Switch(models.Model):
         elif len(uplink_ports) == 2:
             ranges.append(range(1, min(uplink_ports)))
             ranges.append(range(min(uplink_ports)+1, (max(uplink_ports))))
-            ranges.append(range(max(uplink_ports)+1, self.ports+1))
+
+            if(max(uplink_ports) < self.ports):
+                ranges.append(range(max(uplink_ports)+1, self.ports+1))
 
         return ranges
 

@@ -8,16 +8,22 @@ from pysnmp.entity.rfc3413.oneliner import cmdgen
 
 logger = logging.getLogger(__name__)
 
+
 class Command(BaseCommand):
     args = ''
     help = 'Does some switch stuffs'
 
     def handle(self, *args, **options):
-        mac = '001f.161c.4c86'
 
-        # vlan = switch.switch_vlan_clean.num
-        #switch = Switch.objects.get(id=1)
-        #switch.flip_vlan(mac)
+        for switch in Switch.objects.filter(enabled=True):
+            self.stdout.write("Testing switch %s : %s" % (switch.id, switch.name))
 
-        # print switch.snmp_find_port(mac)
-        Switch.objects.flip_vlan(mac)
+            switch.get_provider().snmp_device(switch)
+
+
+            try:
+                switch.get_provider().snmp_get('1.3.6.1.2.1.17.4.3.1.1')
+                self.stdout.write("Switch %s ok" % switch.name)
+
+            except Exception, e:
+                self.stderr.write("error with switch %s: %s" % (switch.name, e))

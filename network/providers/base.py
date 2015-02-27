@@ -1,3 +1,4 @@
+import logging
 import paramiko
 import time
 
@@ -8,6 +9,8 @@ from netaddr import *
 from network.exceptions import SwitchNotConnected
 from network.exceptions import MacNotFound
 from network.exceptions import PortNotFound
+
+logger = logging.getLogger(__name__)
 
 
 class BaseSwitchBackend(object):
@@ -104,20 +107,28 @@ class BaseSwitchBackend(object):
         return name[0][1]
 
     def snmp_find_port(self, mac):
+
+        logger.info("SNMP Finding port for mac %s" % mac)
+
         matched_macs = ()
         dot1dtpfdbaddress = '1.3.6.1.2.1.17.4.3.1.1'
         device_macs = self.snmp_walk(dot1dtpfdbaddress)
+
 
         for val in device_macs:
             # Convert pysnmp crap returns to proper strings
             val_oid = str(val[0])
             val_mac = str(val[1].prettyPrint())[2:]
 
+            logger.info("Parsed mac to test: %s" % val_mac)
+
             # Does this mac address match the one we're looking for?
             if EUI(val_mac, dialect=mac_cisco) == EUI(mac, dialect=mac_cisco):
                 matched_macs += (val_oid.replace('1.3.6.1.2.1.17.4.3.1.1.', ''), )
 
+        logger.info("Matched macs: %s" % matched_macs)
         if matched_macs == ():
+            logger.info("no macs matched, throwing error!")
             # Nothing found
             raise MacNotFound()
 
@@ -127,12 +138,16 @@ class BaseSwitchBackend(object):
             dot1dtpfdbport = '1.3.6.1.2.1.17.4.3.1.2.' + str(oid)
             bridge = self.snmp_get(dot1dtpfdbport)
 
+            logger.info("Bridge: %s" % bridge)
+
             if bridge == ():
                 break
 
             # We found a bridge, find interface index - 1 result
             ifindex = '1.3.6.1.2.1.2.2.1.1.' + str(bridge[0][1])
             interface = self.snmp_get(ifindex)
+
+            logger.info("Interface: %s" % interface)
 
             if interface == ():
                 break
@@ -141,17 +156,22 @@ class BaseSwitchBackend(object):
             # If valid, find interface name
             # Pre-set 'name' in case we need it to fail properly
             name = ()
-            if interface[0][1] < self.switch.ports and interface[0][1] not in (self.switch.uplink_ports.values_list('port')):
+
+            if interface[0][1] <= self.switch.ports and interface[0][1] not in (self.switch.uplink_ports.values_list('port')):
                 ifname = '1.3.6.1.2.1.31.1.1.1.1.' + str(interface[0][1])
                 name = self.snmp_get(ifname)
 
+            logger.info("Name: %s" % name)
+
             if name == ():
+                logger.info("No name, breaking loop")
                 break
 
             # We found the interface name, return it
             return name[0][1]
 
         # Nothing valid found
+        logger.info("nothing valid found, returning")
         raise MacNotFound()
 
     def ssh_connect(self, switch):

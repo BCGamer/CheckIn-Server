@@ -1,3 +1,5 @@
+import logging
+
 from django.db import models
 from network.exceptions import MacNotFound
 from network.providers import registry
@@ -5,18 +7,24 @@ from netaddr import *
 
 from network.exceptions import TooManyUplinks
 
+logger = logging.getLogger(__name__)
+
 
 class SwitchManager(models.Manager):
 
     def flip_vlan(self, mac, vlan_number=None):
 
+        logger.info("Flipping Vlan for mac %s to %s" % (mac, vlan_number))
+
         found_mac = False
         enabled_switches = super(SwitchManager, self).get_queryset().filter(enabled=True)
 
         for switch in enabled_switches:
+
             try:
-                print switch.name
+                logger.info("Trying switch %s" % switch)
                 switch.flip_mac_vlan(mac, vlan_number)
+
             except MacNotFound, e:
                 continue
 
@@ -118,7 +126,7 @@ class Switch(models.Model):
         verbose_name_plural = 'Switches'
 
     def __unicode__(self):
-        return '{0} ({1})'.format(self.name, self.ip)
+        return '{0} ({1})'.format(self.id, self.name)
 
     def get_provider(self):
         if not self._provider_cache:
@@ -161,23 +169,31 @@ class Switch(models.Model):
 
     def flip_mac_vlan(self, mac, vlan_number=None):
         if not vlan_number:
+            logger.info("No vlan specified, using %s" % self.switch_vlan_clean.num)
             vlan_number = self.switch_vlan_clean.num
 
         provider = self.get_provider()
+
+        logger.info("Getting snmp device")
         provider.snmp_device(self)
+        logger.info("Got snmp device")
 
         try:
+            logger.info("Attempting to find port for mac")
             port = provider.snmp_find_port(mac)
+            logger.info("Got port %s" % port)
             self.connect()
             self.get_shell()
+            logger.info("Found mac, changing port vlan")
             provider.ssh_change_port_vlan(port, vlan_number)
 
         except MacNotFound, e:
             self.disconnect()
+            logger.warn("Mac not found in switch %s" % self)
             raise MacNotFound()
 
         except Exception, e:
-            print e
+            logger.error(e)
             pass
 
         finally:
